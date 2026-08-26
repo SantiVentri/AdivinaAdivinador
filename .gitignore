@@ -1,0 +1,29 @@
+# Bytecode / Compilados
+*.class
+*.war
+*.ear
+*.jar
+
+# Carpetas de salida de compilación
+bin/
+target/
+build/
+out/
+
+# Metadata y configuraciones de Eclipse
+.metadata/
+.project
+.classpath
+.settings/
+*.launch
+bin.includes
+plugins/
+features/
+
+# Configuraciones de otros editores / IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.sub
