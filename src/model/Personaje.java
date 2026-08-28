@@ -5,32 +5,35 @@ public class Personaje {
 	private int id;
 	private String nombre;
 	
-	// Atributos físicos
+	// Atributos generales
 	private Genero genero;
 	private Edad edad;
-	private ColorPiel colorPiel;
 	private ColorOjos colorOjos;
 	private ColorPelo colorPelo;
 	private boolean calvicie;
-	
-	// Vestimenta
 	private boolean lentes;
-	private boolean sombrero;
+	
+	// Atributos de personaje de Harry Potter
+	private CasaHogwarts casa;
+	private SangreLimpia sangreLimpia;
+	private boolean alumno;
 	
 	// Constructor
-	public Personaje(String nombre, Genero genero, Edad edad, ColorPiel colorPiel, ColorOjos colorOjos,
-			ColorPelo colorPelo, boolean calvicie, boolean lentes, boolean sombrero) {
+	public Personaje(String nombre, Genero genero, Edad edad, ColorOjos colorOjos, ColorPelo colorPelo,
+			boolean calvicie, boolean lentes, CasaHogwarts casa, SangreLimpia sangreLimpia, boolean alumno) {
 		this.id = contador++;
 		this.nombre = nombre;
 		this.genero = genero;
 		this.edad = edad;
-		this.colorPiel = colorPiel;
 		this.colorOjos = colorOjos;
 		this.colorPelo = colorPelo;
 		this.calvicie = calvicie;
 		this.lentes = lentes;
-		this.sombrero = sombrero;
+		this.casa = casa;
+		this.sangreLimpia = sangreLimpia;
+		this.alumno = alumno;
 	}
+
 	
 	// Métodos
 	public boolean cumpleFiltro(TipoFiltro tipo, String valorEsperado) {
@@ -39,8 +42,6 @@ public class Personaje {
 	            return genero.name().equalsIgnoreCase(valorEsperado);
 	        case EDAD:
 	        	return edad.name().equalsIgnoreCase(valorEsperado);
-	        case COLOR_PIEL:
-	            return colorPiel.name().equalsIgnoreCase(valorEsperado);
 	        case COLOR_OJOS:
 	            return colorOjos.name().equalsIgnoreCase(valorEsperado);
 	        case COLOR_PELO:
@@ -49,13 +50,17 @@ public class Personaje {
 	            return calvicie == Boolean.parseBoolean(valorEsperado);
 	        case LENTES:
 	            return lentes == Boolean.parseBoolean(valorEsperado);
-	        case SOMBRERO:
-	            return sombrero == Boolean.parseBoolean(valorEsperado);
+	        case CASA_HOGWARTS:
+	        	return casa.name().equalsIgnoreCase(valorEsperado);
+	        case SANGRE_LIMPIA:
+	        	return sangreLimpia.name().equalsIgnoreCase(valorEsperado);
+	        case ALUMNO:
+	        	return alumno == Boolean.parseBoolean(valorEsperado);
 	        default:
 	            return false;
 		}
 	}	
-	
+
 	// Getters
 	public int getId() {
 		return id;
@@ -73,10 +78,6 @@ public class Personaje {
 		return edad;
 	}
 
-	public ColorPiel getColorPiel() {
-		return colorPiel;
-	}
-
 	public ColorOjos getColorOjos() {
 		return colorOjos;
 	}
@@ -92,14 +93,16 @@ public class Personaje {
 	public boolean tieneLentes() {
 		return lentes;
 	}
-
-	public boolean tieneSombrero() {
-		return sombrero;
-	}
 	
-	@Override
-	public String toString() {
-	    return String.format("[%02d] %-15s | %-9s | %-10s | Calvo: %-3s | Lentes: %-3s | Pelo: %s",
-	            id, nombre, genero, edad, (calvicie ? "Sí" : "No"), (lentes ? "Sí" : "No"), colorPelo);
+	public CasaHogwarts getCasa() {
+		return casa;
+	}
+
+	public SangreLimpia getSangreLimpia() {
+		return sangreLimpia;
+	}
+
+	public boolean esAlumno() {
+		return alumno;
 	}
 }

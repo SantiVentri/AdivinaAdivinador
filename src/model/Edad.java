@@ -1,7 +1,7 @@
 package model;
 
 public enum Edad {
-	JOVEN,
+	ADOLESCENTE,
 	ADULTO,
 	ANCIANO
 }

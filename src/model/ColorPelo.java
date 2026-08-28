@@ -3,5 +3,9 @@ package model;
 public enum ColorPelo {
 	COLORADO,
 	NEGRO,
-	AMARILLO
+	GRIS,
+	MARRON,
+	ROSA,
+	AMARILLO,
+	BLANCO
 }
