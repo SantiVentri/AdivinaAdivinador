@@ -30,6 +30,28 @@ public class Personaje {
 		this.sombrero = sombrero;
 	}
 	
+	// Métodos
+	public boolean cumpleFiltro(TipoFiltro tipo, String valorEsperado) {
+		switch (tipo) {
+	        case GENERO:
+	            return genero.name().equalsIgnoreCase(valorEsperado);
+	        case COLOR_PIEL:
+	            return colorPiel.name().equalsIgnoreCase(valorEsperado);
+	        case COLOR_OJOS:
+	            return colorOjos.name().equalsIgnoreCase(valorEsperado);
+	        case COLOR_PELO:
+	            return colorPelo.name().equalsIgnoreCase(valorEsperado);
+	        case CALVICIE:
+	            return calvicie == Boolean.parseBoolean(valorEsperado);
+	        case LENTES:
+	            return lentes == Boolean.parseBoolean(valorEsperado);
+	        case SOMBRERO:
+	            return sombrero == Boolean.parseBoolean(valorEsperado);
+	        default:
+	            return false;
+		}
+	}	
+	
 	// Getters
 	public int getId() {
 		return id;
