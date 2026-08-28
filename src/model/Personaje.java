@@ -7,6 +7,7 @@ public class Personaje {
 	
 	// Atributos físicos
 	private Genero genero;
+	private Edad edad;
 	private ColorPiel colorPiel;
 	private ColorOjos colorOjos;
 	private ColorPelo colorPelo;
@@ -17,11 +18,12 @@ public class Personaje {
 	private boolean sombrero;
 	
 	// Constructor
-	public Personaje(String nombre, Genero genero, ColorPiel colorPiel, ColorOjos colorOjos,
+	public Personaje(String nombre, Genero genero, Edad edad, ColorPiel colorPiel, ColorOjos colorOjos,
 			ColorPelo colorPelo, boolean calvicie, boolean lentes, boolean sombrero) {
 		this.id = contador++;
 		this.nombre = nombre;
 		this.genero = genero;
+		this.edad = edad;
 		this.colorPiel = colorPiel;
 		this.colorOjos = colorOjos;
 		this.colorPelo = colorPelo;
@@ -35,6 +37,8 @@ public class Personaje {
 		switch (tipo) {
 	        case GENERO:
 	            return genero.name().equalsIgnoreCase(valorEsperado);
+	        case EDAD:
+	        	return edad.name().equalsIgnoreCase(valorEsperado);
 	        case COLOR_PIEL:
 	            return colorPiel.name().equalsIgnoreCase(valorEsperado);
 	        case COLOR_OJOS:
@@ -64,6 +68,10 @@ public class Personaje {
 	public Genero getGenero() {
 		return genero;
 	}
+	
+	public Edad getEdad() {
+		return edad;
+	}
 
 	public ColorPiel getColorPiel() {
 		return colorPiel;
@@ -91,7 +99,7 @@ public class Personaje {
 	
 	@Override
 	public String toString() {
-	    return String.format("[%02d] %-15s | %-9s | Calvo: %-3s | Lentes: %-3s | Pelo: %s",
-	            id, nombre, genero, (calvicie ? "Sí" : "No"), (lentes ? "Sí" : "No"), colorPelo);
+	    return String.format("[%02d] %-15s | %-9s | %-10s | Calvo: %-3s | Lentes: %-3s | Pelo: %s",
+	            id, nombre, genero, edad, (calvicie ? "Sí" : "No"), (lentes ? "Sí" : "No"), colorPelo);
 	}
 }
