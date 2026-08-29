@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import model.CasaHogwarts;
@@ -83,6 +84,12 @@ public class PersonajeFactory {
 		personajes.add(new Personaje("Gilderoy Lockhart", Genero.MASCULINO, Edad.ADULTO,
 				ColorPelo.AMARILLO, false, false, CasaHogwarts.RAVENCLAW, SangreLimpia.MESTIZO, false));
 		
+		ordenarPorGenero(personajes);
+		
 		return personajes;
+	}
+	
+	private void ordenarPorGenero(List<Personaje> personajes) {
+		personajes.sort(Comparator.comparing(Personaje::getGenero));
 	}
 }
