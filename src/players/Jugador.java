@@ -5,9 +5,9 @@ import model.Personaje;
 import model.Tablero;
 
 public abstract class Jugador {
-    protected final String nombre;
-    protected Personaje personajeSecreto;
-    protected final Tablero tablero;
+    private final String nombre;
+    private Personaje personajeSecreto;
+    private final Tablero tablero;
 
     protected Jugador(String nombre, Tablero tablero) {
         this.nombre = nombre;
