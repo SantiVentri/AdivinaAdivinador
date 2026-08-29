@@ -15,16 +15,25 @@ import model.TipoFiltro;
 
 public class MaquinaAleatoria extends Jugador {
 	private final Random random = new Random();
+	private final HistorialConsultas historial;
 
-	public MaquinaAleatoria(Tablero tablero) {
+	public MaquinaAleatoria(Tablero tablero, HistorialConsultas historial) {
 		super("Máquina Aleatorio", tablero);
+		this.historial = historial;
 	}
 
 	@Override
 	public FiltroAplicado hacerPregunta() {
 		TipoFiltro[] tipos = TipoFiltro.values();
-		TipoFiltro tipo = tipos[random.nextInt(tipos.length)];
-		String valor = elegirValorAlAzar(tipo);
+		TipoFiltro tipo;
+		String valor;
+		int intentos = 0;
+
+		do {
+			tipo = tipos[random.nextInt(tipos.length)];
+			valor = elegirValorAlAzar(tipo);
+			intentos++;
+		} while (historial.yaFuePreguntado(clave(tipo, valor)) && intentos < 50);
 
 		System.out.println("[Máquina Aleatoria] No analizo nada, pregunto al azar: " + tipo + "=" + valor);
 
@@ -71,6 +80,10 @@ public class MaquinaAleatoria extends Jugador {
 
 	private <T extends Enum<T>> String valorAlAzar(T[] valores) {
 		return valores[random.nextInt(valores.length)].name();
+	}
+	
+	private String clave(TipoFiltro tipo, String valor) {
+		return tipo.name() + "=" + valor;
 	}
 
 }
