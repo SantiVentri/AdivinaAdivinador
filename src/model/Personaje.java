@@ -8,7 +8,6 @@ public class Personaje {
 	// Atributos generales
 	private Genero genero;
 	private Edad edad;
-	private ColorOjos colorOjos;
 	private ColorPelo colorPelo;
 	private boolean calvicie;
 	private boolean lentes;
@@ -19,13 +18,12 @@ public class Personaje {
 	private boolean alumno;
 	
 	// Constructor
-	public Personaje(String nombre, Genero genero, Edad edad, ColorOjos colorOjos, ColorPelo colorPelo,
+	public Personaje(String nombre, Genero genero, Edad edad, ColorPelo colorPelo,
 			boolean calvicie, boolean lentes, CasaHogwarts casa, SangreLimpia sangreLimpia, boolean alumno) {
 		this.id = contador++;
 		this.nombre = nombre;
 		this.genero = genero;
 		this.edad = edad;
-		this.colorOjos = colorOjos;
 		this.colorPelo = colorPelo;
 		this.calvicie = calvicie;
 		this.lentes = lentes;
@@ -42,8 +40,6 @@ public class Personaje {
 	            return genero.name().equalsIgnoreCase(valorEsperado);
 	        case EDAD:
 	        	return edad.name().equalsIgnoreCase(valorEsperado);
-	        case COLOR_OJOS:
-	            return colorOjos.name().equalsIgnoreCase(valorEsperado);
 	        case COLOR_PELO:
 	            return colorPelo.name().equalsIgnoreCase(valorEsperado);
 	        case CALVICIE:
@@ -76,10 +72,6 @@ public class Personaje {
 	
 	public Edad getEdad() {
 		return edad;
-	}
-
-	public ColorOjos getColorOjos() {
-		return colorOjos;
 	}
 
 	public ColorPelo getColorPelo() {
