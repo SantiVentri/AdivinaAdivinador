@@ -44,6 +44,10 @@ public class Tablero {
 
         return contador;
     }
+    
+    public void sacarPersonaje(Personaje personaje) {
+    	this.personajesRestantes.remove(personaje);
+    }
 
     // Consultas
     public Personaje buscarPorNombre(String nombre) {

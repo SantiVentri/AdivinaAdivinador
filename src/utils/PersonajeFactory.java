@@ -12,7 +12,7 @@ import model.Personaje;
 import model.SangreLimpia;
 
 public class PersonajeFactory {
-	public List<Personaje> crearPersonajes() {
+	public static List<Personaje> crearPersonajes() {
 		List<Personaje> personajes = new ArrayList<Personaje>();
 
 		personajes.add(new Personaje("Harry Potter", Genero.MASCULINO, Edad.ADOLESCENTE,
@@ -89,7 +89,7 @@ public class PersonajeFactory {
 		return personajes;
 	}
 	
-	private void ordenarPorGenero(List<Personaje> personajes) {
+	private static void ordenarPorGenero(List<Personaje> personajes) {
 		personajes.sort(Comparator.comparing(Personaje::getGenero));
 	}
 }
