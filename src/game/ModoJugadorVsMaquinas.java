@@ -14,15 +14,11 @@ import players.JugadorHumano;
 import players.Jugador;
 import players.MaquinaAleatoria;
 import players.MaquinaAsertiva;
+import score.ScoreRepository;
 import utils.Consola;
 import utils.PersonajeFactory;
 
-/**
- * Modo secuencial: el jugador juega primero contra la Máquina Aleatoria.
- * Si gana, entra la Máquina Asertiva a jugar contra él conociendo todas las
- * preguntas que hizo la Aleatoria. El jugador conserva su personaje secreto;
- * cada máquina usa el suyo.
- */
+
 public class ModoJugadorVsMaquinas {
 	private final String nombre;
 	private final Scanner scanner;
@@ -36,14 +32,12 @@ public class ModoJugadorVsMaquinas {
 	public void jugar() {
 		System.out.println("\n########## JUGADOR vs MÁQUINAS ##########");
 
-		// Una sola lista de personajes para toda la sesión: todos los tableros comparten
-		// las mismas instancias (los intentos se comparan por identidad) y así el
-		// personaje secreto del jugador sigue estando en el tablero de la Asertiva.
+		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
+		ScoreRepository scoreRepository = new ScoreRepository();
 
-		// Después del turno de una máquina se espera un Enter para dar tiempo a leer el log.
-		// No se pausa después del turno del jugador (recién terminó de interactuar).
+		
 		Consumer<Jugador> pausaTrasMaquina = jugadorQueJugo -> {
 			if (!(jugadorQueJugo instanceof JugadorHumano)) {
 				Consola.esperarEnter(scanner);
@@ -52,7 +46,7 @@ public class ModoJugadorVsMaquinas {
 
 		Personaje secretoJugador = elegirPersonajeSecreto(personajes);
 
-		// ---------- Ronda 1: Jugador vs Máquina Aleatoria ----------
+		
 		JugadorHumano jugador1 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
 		jugador1.elegirPersonaje(secretoJugador);
 
@@ -66,11 +60,10 @@ public class ModoJugadorVsMaquinas {
 			return;
 		}
 
+		scoreRepository.registrarVictoria(nombre);
 		System.out.println("\n¡Ganaste la primera ronda! Ahora entra la Máquina Asertiva.");
 
-		// ---------- Ronda 2: Jugador (mismo personaje) vs Máquina Asertiva ----------
-		// Se usa un JugadorHumano nuevo porque elegirPersonaje es de un solo uso y el
-		// Tablero no se puede reasignar; lo que se conserva es el Personaje secreto.
+		
 		Tablero tableroAsertiva = new Tablero(personajes);
 		JugadorHumano jugador2 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
 		jugador2.elegirPersonaje(secretoJugador);
@@ -85,6 +78,7 @@ public class ModoJugadorVsMaquinas {
 		Jugador ganador2 = new MotorJuego(jugador2, asertiva, historial, pausaTrasMaquina).jugar();
 
 		if (ganador2 == jugador2) {
+			scoreRepository.registrarVictoria(nombre);
 			System.out.println("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
 		} else if (ganador2 == null) {
 			System.out.println("\nLa segunda ronda terminó en empate.");
@@ -93,9 +87,7 @@ public class ModoJugadorVsMaquinas {
 		}
 	}
 
-	// Aplica sobre el tablero de la Asertiva todas las preguntas que hizo la Aleatoria
-	// (fueron sobre el personaje del jugador, que no cambió) y las registra a nombre de
-	// la Asertiva para que no las vuelva a preguntar. Devuelve cuántas replicó.
+	
 	private int replicarPreguntasPrevias(HistorialConsultas historial, String nombreAleatoria,
 			String nombreAsertiva, Tablero tableroAsertiva) {
 		List<Consulta> previas = historial.obtenerConsultasDe(nombreAleatoria);

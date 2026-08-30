@@ -13,10 +13,7 @@ import players.MaquinaAsertiva;
 import utils.Consola;
 import utils.PersonajeFactory;
 
-/**
- * Modo espectador: juegan la Máquina Asertiva y la Máquina Aleatoria entre sí.
- * Después de cada turno se espera un Enter para poder seguir la partida a tu ritmo.
- */
+
 public class ModoMaquinaVsMaquina {
 	private final Random random = new Random();
 	private final Scanner scanner;
@@ -28,8 +25,7 @@ public class ModoMaquinaVsMaquina {
 	public void jugar() {
 		System.out.println("\n########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
 
-		// Una sola lista de personajes para toda la sesión: los tableros comparten
-		// las mismas instancias (los intentos se comparan por identidad).
+		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
 

@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import game.ModoJugadorVsMaquinas;
 import game.ModoMaquinaVsMaquina;
+import score.ScoreRepository;
 
 public class Main {
 
@@ -83,6 +84,6 @@ public class Main {
 	}
 
 	private static void mostrarPuntajes() {
-		System.out.println("\n(Los puntajes todavía no están implementados.)");
+		new ScoreRepository().mostrar();
 	}
 }
