@@ -25,37 +25,46 @@ public class MaquinaAsertiva extends Jugador {
 	@Override
 	public FiltroAplicado hacerPregunta() {
 		int restantes = getTablero().cantidadRestante();
-		double mitad = restantes / 2.0;
-
 		System.out.println("[Máquina Asertiva] Analizando filtros sobre " + restantes + " personaje(s) restante(s)...");
 
-		FiltroAplicado mejorFiltro = null;
-		double mejorDiferencia = Double.MAX_VALUE;
-
-		for (TipoFiltro tipo : TipoFiltro.values()) {
-			for (String valor : valoresPosibles(tipo)) {
-				if (historial.yaFuePreguntado(clave(tipo, valor))) {
-					continue;
-				}
-
-				int cantidad = getTablero().contarSiSeAplicara(tipo, valor);
-				double diferencia = Math.abs(cantidad - mitad);
-
-				System.out.println("  - Evalúo " + tipo + "=" + valor + " -> " + cantidad + "/" + restantes
-						+ " cumplen (diferencia con la mitad: " + diferencia + ")");
-
-				if (diferencia < mejorDiferencia) {
-					mejorDiferencia = diferencia;
-					mejorFiltro = new FiltroAplicado(tipo, valor);
-				}
-			}
-		}
+		FiltroAplicado mejorFiltro = buscarMejorFiltro(true);
 
 		if (mejorFiltro != null) {
 			System.out.println("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo() + "=" + mejorFiltro.getValor()
 					+ " por ser la división más equilibrada.");
 		} else {
 			System.out.println("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
+		}
+
+		return mejorFiltro;
+	}
+
+	// Elige el filtro (no preguntado aún) cuya cantidad de coincidencias esté más cerca de la
+	// mitad de los personajes restantes (máxima división). Devuelve null si no queda ninguno.
+	private FiltroAplicado buscarMejorFiltro(boolean verboso) {
+		double mitad = getTablero().cantidadRestante() / 2.0;
+		FiltroAplicado mejorFiltro = null;
+		double mejorDiferencia = Double.MAX_VALUE;
+
+		for (TipoFiltro tipo : TipoFiltro.values()) {
+			for (String valor : valoresPosibles(tipo)) {
+				if (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor))) {
+					continue;
+				}
+
+				int cantidad = getTablero().contarSiSeAplicara(tipo, valor);
+				double diferencia = Math.abs(cantidad - mitad);
+
+				if (verboso) {
+					System.out.println("  - Evalúo " + tipo + "=" + valor + " -> " + cantidad
+							+ " cumplen (diferencia con la mitad: " + diferencia + ")");
+				}
+
+				if (diferencia < mejorDiferencia) {
+					mejorDiferencia = diferencia;
+					mejorFiltro = new FiltroAplicado(tipo, valor);
+				}
+			}
 		}
 
 		return mejorFiltro;
@@ -70,9 +79,14 @@ public class MaquinaAsertiva extends Jugador {
 			return null;
 		}
 
-		int indiceRandom = random.nextInt(restantes.size());
-		Personaje elegido = restantes.get(indiceRandom);
+		// Solo arriesga cuando ya no puede seguir descartando: queda uno solo,
+		// o no le quedan preguntas nuevas para hacer.
+		boolean sinPreguntas = buscarMejorFiltro(false) == null;
+		if (!getTablero().quedaUnoSolo() && !sinPreguntas) {
+			return null;
+		}
 
+		Personaje elegido = restantes.get(random.nextInt(restantes.size()));
 		System.out.println("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
 
 		return elegido;
@@ -105,10 +119,6 @@ public class MaquinaAsertiva extends Jugador {
 			nombres[i] = valores[i].name();
 		}
 		return nombres;
-	}
-
-	private String clave(TipoFiltro tipo, String valor) {
-		return tipo.name() + "=" + valor;
 	}
 
 }

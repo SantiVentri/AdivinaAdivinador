@@ -57,6 +57,21 @@ public class Personaje {
 		}
 	}	
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("#").append(id).append(" ").append(nombre)
+			.append(" - ").append(genero)
+			.append(", ").append(edad)
+			.append(", pelo ").append(colorPelo)
+			.append(", ").append(casa)
+			.append(", ").append(sangreLimpia);
+		if (calvicie) sb.append(", calvo/a");
+		if (lentes) sb.append(", con lentes");
+		sb.append(alumno ? ", alumno/a" : ", no alumno/a");
+		return sb.toString();
+	}
+
 	// Getters
 	public int getId() {
 		return id;

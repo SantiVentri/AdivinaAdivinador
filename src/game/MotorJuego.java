@@ -2,24 +2,46 @@ package game;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import model.FiltroAplicado;
 import model.Personaje;
+import players.HistorialConsultas;
 import players.Jugador;
 
 public class MotorJuego {
 	private static final int INTENTOS_FALLIDOS_PARA_PERDER = 3;
+	private static final int MAX_TURNOS_SIN_PROGRESO = 4;
 
 	private final Jugador jugador1;
 	private final Jugador jugador2;
 	private final Map<Jugador, Integer> intentosFallidos;
+	private final HistorialConsultas historial;
+	private final Consumer<Jugador> alTerminarTurno;
 
 	private Jugador ganador;
 	private boolean partidaTerminada;
+	private int turnosSinProgreso;
 
 	public MotorJuego(Jugador jugador1, Jugador jugador2) {
+		this(jugador1, jugador2, new HistorialConsultas());
+	}
+
+	public MotorJuego(Jugador jugador1, Jugador jugador2, HistorialConsultas historial) {
+		this(jugador1, jugador2, historial, null);
+	}
+
+	/**
+	 * @param alTerminarTurno callback opcional invocado con el jugador que acaba de jugar,
+	 *                        cada vez que termina un turno y la partida sigue en juego
+	 *                        (los modos lo usan para pausar y dejar leer el log).
+	 */
+	public MotorJuego(Jugador jugador1, Jugador jugador2, HistorialConsultas historial, Consumer<Jugador> alTerminarTurno) {
 		if (jugador1 == null || jugador2 == null) {
 			throw new IllegalArgumentException("Los dos jugadores son obligatorios.");
+		}
+		if (historial == null) {
+			throw new IllegalArgumentException("El historial de consultas es obligatorio.");
 		}
 		if (!jugador1.tienePersonajeElegido() || !jugador2.tienePersonajeElegido()) {
 			throw new IllegalStateException("Ambos jugadores deben tener un personaje secreto elegido antes de iniciar la partida.");
@@ -27,6 +49,8 @@ public class MotorJuego {
 
 		this.jugador1 = jugador1;
 		this.jugador2 = jugador2;
+		this.historial = historial;
+		this.alTerminarTurno = alTerminarTurno;
 		this.intentosFallidos = new HashMap<>();
 		this.intentosFallidos.put(jugador1, 0);
 		this.intentosFallidos.put(jugador2, 0);
@@ -47,10 +71,19 @@ public class MotorJuego {
 				break;
 			}
 
+			if (turnosSinProgreso >= MAX_TURNOS_SIN_PROGRESO) {
+				System.out.println("\nNadie avanza hace varios turnos. ¡Empate!");
+				break;
+			}
+
 			jugarTurno(activo, pasivo, numeroTurno);
 
 			if (partidaTerminada) {
 				break;
+			}
+
+			if (alTerminarTurno != null) {
+				alTerminarTurno.accept(activo);
 			}
 
 			Jugador siguienteActivo = pasivo;
@@ -69,6 +102,7 @@ public class MotorJuego {
 		Personaje intento = activo.arriesgarPersonaje();
 
 		if (intento != null) {
+			turnosSinProgreso = 0;
 			resolverIntento(activo, pasivo, intento);
 			return;
 		}
@@ -76,15 +110,21 @@ public class MotorJuego {
 		FiltroAplicado filtro = activo.hacerPregunta();
 		if (filtro == null) {
 			System.out.println(activo.getNombre() + " no tiene más preguntas nuevas para hacer, pasa el turno.");
+			turnosSinProgreso++;
 			return;
 		}
 
+		int restantesAntes = activo.getTablero().cantidadRestante();
 		boolean respuesta = pasivo.responderPregunta(filtro);
+		historial.agregarConsulta(activo.getNombre(), filtro, respuesta);
 		System.out.println(activo.getNombre() + " pregunta -> " + filtro.getTipo() + " = " + filtro.getValor());
 		System.out.println(pasivo.getNombre() + " responde -> " + (respuesta ? "Sí" : "No"));
 
 		activo.filtrarOpciones(filtro, respuesta);
-		System.out.println(activo.getNombre() + " tiene ahora " + activo.getTablero().cantidadRestante() + " personaje(s) posible(s).");
+		int restantesDespues = activo.getTablero().cantidadRestante();
+		System.out.println(activo.getNombre() + " tiene ahora " + restantesDespues + " personaje(s) posible(s).");
+
+		turnosSinProgreso = (restantesDespues < restantesAntes) ? 0 : turnosSinProgreso + 1;
 	}
 
 	private void resolverIntento(Jugador activo, Jugador pasivo, Personaje intento) {
@@ -95,6 +135,9 @@ public class MotorJuego {
 			declararGanador(activo);
 			return;
 		}
+
+		// El intento fue incorrecto: ese personaje ya no es una opción posible, se saca del tablero.
+		activo.getTablero().sacarPersonaje(intento);
 
 		int fallos = intentosFallidos.get(activo) + 1;
 		intentosFallidos.put(activo, fallos);

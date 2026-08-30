@@ -30,18 +30,31 @@ public class JugadorHumano extends Jugador {
 	@Override
 	public Personaje arriesgarPersonaje() {
 		getTablero().mostrar();
-		System.out.print("\nEscribí el nombre del personaje que creés que es (o 'cancelar'):\n>> ");
-		String entrada = scanner.nextLine().trim();
 
-		if (entrada.equalsIgnoreCase("cancelar")) {
-			return null;
-		}
+		while (true) {
+			System.out.println("\nEs tu turno. ¿Qué querés hacer?");
+			System.out.println("1. Arriesgar un personaje");
+			System.out.println("2. Hacer una pregunta");
+			int opcion = leerOpcionEnRango(2);
 
-		Personaje elegido = getTablero().buscarPorNombre(entrada);
-		if (elegido == null) {
-			System.out.println("No encontré ese personaje entre los restantes.");
+			if (opcion == 2) {
+				return null;
+			}
+
+			System.out.print("\nEscribí el nombre del personaje (o 0 para volver):\n>> ");
+			String entrada = scanner.nextLine().trim();
+
+			if (entrada.equals("0")) {
+				continue;
+			}
+
+			Personaje elegido = getTablero().buscarPorNombre(entrada);
+			if (elegido == null) {
+				System.out.println("No encontré ese personaje entre los restantes.");
+				continue;
+			}
+			return elegido;
 		}
-		return elegido;
 	}
 
 	private TipoFiltro elegirTipoFiltro() {

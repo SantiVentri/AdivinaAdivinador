@@ -14,11 +14,13 @@ import model.Tablero;
 import model.TipoFiltro;
 
 public class MaquinaAleatoria extends Jugador {
+	private static final double PROB_ARRIESGAR = 0.3;
+
 	private final Random random = new Random();
 	private final HistorialConsultas historial;
 
 	public MaquinaAleatoria(Tablero tablero, HistorialConsultas historial) {
-		super("Máquina Aleatorio", tablero);
+		super("Máquina Aleatoria", tablero);
 		this.historial = historial;
 	}
 
@@ -33,7 +35,7 @@ public class MaquinaAleatoria extends Jugador {
 			tipo = tipos[random.nextInt(tipos.length)];
 			valor = elegirValorAlAzar(tipo);
 			intentos++;
-		} while (historial.yaFuePreguntado(clave(tipo, valor)) && intentos < 50);
+		} while (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor)) && intentos < 50);
 
 		System.out.println("[Máquina Aleatoria] No analizo nada, pregunto al azar: " + tipo + "=" + valor);
 
@@ -46,6 +48,12 @@ public class MaquinaAleatoria extends Jugador {
 
 		if (restantes.isEmpty()) {
 			System.out.println("[Máquina Aleatoria] No quedan personajes para arriesgar.");
+			return null;
+		}
+
+		boolean forzado = getTablero().quedaUnoSolo();
+		if (!forzado && random.nextDouble() >= PROB_ARRIESGAR) {
+			// Este turno prefiero preguntar al azar en vez de arriesgar.
 			return null;
 		}
 
@@ -80,10 +88,6 @@ public class MaquinaAleatoria extends Jugador {
 
 	private <T extends Enum<T>> String valorAlAzar(T[] valores) {
 		return valores[random.nextInt(valores.length)].name();
-	}
-	
-	private String clave(TipoFiltro tipo, String valor) {
-		return tipo.name() + "=" + valor;
 	}
 
 }

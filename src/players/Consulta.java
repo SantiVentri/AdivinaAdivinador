@@ -1,23 +1,29 @@
 package players;
 
+import model.FiltroAplicado;
+
 public class Consulta {
 	private String nombreJugador;
-	private String pregunta;
+	private FiltroAplicado filtro;
 	private boolean respuesta;
-	
-	public Consulta(String nombreJugador, String pregunta, boolean respuesta) {
+
+	public Consulta(String nombreJugador, FiltroAplicado filtro, boolean respuesta) {
 		this.nombreJugador = nombreJugador;
-		this.pregunta = pregunta;
+		this.filtro = filtro;
 		this.respuesta = respuesta;
 	}
-	
+
 	// Getters
 	public String getNombreJugador() {
 		return nombreJugador;
 	}
 
+	public FiltroAplicado getFiltro() {
+		return filtro;
+	}
+
 	public String getPregunta() {
-		return pregunta;
+		return filtro.clave();
 	}
 
 	public boolean getRespuesta() {
