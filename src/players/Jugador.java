@@ -25,8 +25,8 @@ public abstract class Jugador {
 
     public abstract Personaje arriesgarPersonaje();
 
-    public void filtrarOpciones(FiltroAplicado filtro) {
-        tablero.aplicarFiltro(filtro.getTipo(), filtro.getValor());
+    public void filtrarOpciones(FiltroAplicado filtro, boolean respuestaEsperada) {
+    	tablero.aplicarFiltro(filtro.getTipo(), filtro.getValor(), respuestaEsperada);
     }
     
     public boolean responderPregunta(FiltroAplicado filtro) {
