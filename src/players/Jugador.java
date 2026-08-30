@@ -36,6 +36,17 @@ public abstract class Jugador {
         return this.personajeSecreto.cumpleFiltro(filtro.getTipo(), filtro.getValor());
     }
 
+    public boolean tienePersonajeElegido() {
+        return this.personajeSecreto != null;
+    }
+
+    public boolean esPersonajeSecreto(Personaje candidato) {
+        if (this.personajeSecreto == null) {
+            throw new IllegalStateException("El jugador aún no tiene asignado un personaje secreto.");
+        }
+        return this.personajeSecreto.equals(candidato);
+    }
+
     // Getters
     public String getNombre() {
         return nombre;
