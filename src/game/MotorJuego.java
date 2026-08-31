@@ -31,11 +31,6 @@ public class MotorJuego {
 		this(jugador1, jugador2, historial, null);
 	}
 
-	/**
-	 * @param alTerminarTurno callback opcional invocado con el jugador que acaba de jugar,
-	 *                        cada vez que termina un turno y la partida sigue en juego
-	 *                        (los modos lo usan para pausar y dejar leer el log).
-	 */
 	public MotorJuego(Jugador jugador1, Jugador jugador2, HistorialConsultas historial, Consumer<Jugador> alTerminarTurno) {
 		if (jugador1 == null || jugador2 == null) {
 			throw new IllegalArgumentException("Los dos jugadores son obligatorios.");
@@ -117,8 +112,8 @@ public class MotorJuego {
 		int restantesAntes = activo.getTablero().cantidadRestante();
 		boolean respuesta = pasivo.responderPregunta(filtro);
 		historial.agregarConsulta(activo.getNombre(), filtro, respuesta);
-		System.out.println(activo.getNombre() + " pregunta -> " + filtro.getTipo() + " = " + filtro.getValor());
-		System.out.println(pasivo.getNombre() + " responde -> " + (respuesta ? "Sí" : "No"));
+		System.out.println(activo.getNombre() + " pregunta -> " + filtro.getTipo() + " = " + filtro.getValor() + "?");
+		System.out.println(pasivo.getNombre() + " responde -> " + (respuesta ? "Sí." : "No."));
 
 		activo.filtrarOpciones(filtro, respuesta);
 		int restantesDespues = activo.getTablero().cantidadRestante();

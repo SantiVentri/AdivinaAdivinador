@@ -30,7 +30,7 @@ public class MaquinaAsertiva extends Jugador {
 		FiltroAplicado mejorFiltro = buscarMejorFiltro(true);
 
 		if (mejorFiltro != null) {
-			System.out.println("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo() + "=" + mejorFiltro.getValor()
+			System.out.println("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo().toString().replace("_", " ") + "=" + mejorFiltro.getValor().toLowerCase()
 					+ " por ser la división más equilibrada.");
 		} else {
 			System.out.println("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
@@ -56,7 +56,7 @@ public class MaquinaAsertiva extends Jugador {
 				double diferencia = Math.abs(cantidad - mitad);
 
 				if (verboso) {
-					System.out.println("  - Evalúo " + tipo + "=" + valor + " -> " + cantidad
+					System.out.println("  - Evalúo " + tipo.toString().toString().replace("_", " ") + " = " + valor + " -> " + cantidad
 							+ " cumplen (diferencia con la mitad: " + diferencia + ")");
 				}
 

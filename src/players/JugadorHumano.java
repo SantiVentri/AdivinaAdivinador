@@ -61,7 +61,7 @@ public class JugadorHumano extends Jugador {
 		TipoFiltro[] tipos = TipoFiltro.values();
 		System.out.println("\n¿Sobre qué característica querés preguntar?");
 		for (int i = 0; i < tipos.length; i++) {
-			System.out.println((i + 1) + ". " + tipos[i]);
+			System.out.println((i + 1) + ". " + tipos[i].toString().replace("_", " "));
 		}
 		int opcion = leerOpcionEnRango(tipos.length);
 		return tipos[opcion - 1];
@@ -70,15 +70,15 @@ public class JugadorHumano extends Jugador {
 	private String elegirValor(TipoFiltro tipo) {
 		switch (tipo) {
 			case GENERO:
-				return elegirValorEnum(Genero.values());
+				return elegirValorEnum(Genero.values()).toLowerCase();
 			case EDAD:
-				return elegirValorEnum(Edad.values());
+				return elegirValorEnum(Edad.values()).toLowerCase();
 			case COLOR_PELO:
-				return elegirValorEnum(ColorPelo.values());
+				return elegirValorEnum(ColorPelo.values()).toLowerCase();
 			case CASA_HOGWARTS:
-				return elegirValorEnum(CasaHogwarts.values());
+				return elegirValorEnum(CasaHogwarts.values()).toLowerCase();
 			case SANGRE_LIMPIA:
-				return elegirValorEnum(SangreLimpia.values());
+				return elegirValorEnum(SangreLimpia.values()).toLowerCase();
 			case CALVICIE:
 				return elegirValorBooleano("¿Es calvo/a?");
 			case LENTES:

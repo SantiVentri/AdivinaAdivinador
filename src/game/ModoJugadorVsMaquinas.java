@@ -31,7 +31,6 @@ public class ModoJugadorVsMaquinas {
 
 	public void jugar() {
 		System.out.println("\n########## JUGADOR vs MÁQUINAS ##########");
-
 		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
@@ -45,7 +44,6 @@ public class ModoJugadorVsMaquinas {
 		};
 
 		Personaje secretoJugador = elegirPersonajeSecreto(personajes);
-
 		
 		JugadorHumano jugador1 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
 		jugador1.elegirPersonaje(secretoJugador);
