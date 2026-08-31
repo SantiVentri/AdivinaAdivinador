@@ -1,7 +1,5 @@
 package game;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import model.FiltroAplicado;
@@ -10,12 +8,10 @@ import players.HistorialConsultas;
 import players.Jugador;
 
 public class MotorJuego {
-	private static final int INTENTOS_FALLIDOS_PARA_PERDER = 3;
 	private static final int MAX_TURNOS_SIN_PROGRESO = 4;
 
 	private final Jugador jugador1;
 	private final Jugador jugador2;
-	private final Map<Jugador, Integer> intentosFallidos;
 	private final HistorialConsultas historial;
 	private final Consumer<Jugador> alTerminarTurno;
 
@@ -46,9 +42,6 @@ public class MotorJuego {
 		this.jugador2 = jugador2;
 		this.historial = historial;
 		this.alTerminarTurno = alTerminarTurno;
-		this.intentosFallidos = new HashMap<>();
-		this.intentosFallidos.put(jugador1, 0);
-		this.intentosFallidos.put(jugador2, 0);
 	}
 
 	public Jugador jugar() {
@@ -133,18 +126,7 @@ public class MotorJuego {
 
 		// El intento fue incorrecto: ese personaje ya no es una opción posible, se saca del tablero.
 		activo.getTablero().sacarPersonaje(intento);
-
-		int fallos = intentosFallidos.get(activo) + 1;
-		intentosFallidos.put(activo, fallos);
-
-		if (fallos >= INTENTOS_FALLIDOS_PARA_PERDER) {
-			System.out.println("Incorrecto. Era el " + fallos + "° intento fallido de " + activo.getNombre() + ", ¡pierde la partida!");
-			declararGanador(pasivo);
-		} else {
-			int oportunidadesRestantes = INTENTOS_FALLIDOS_PARA_PERDER - fallos;
-			System.out.println("Incorrecto. " + activo.getNombre() + " lleva " + fallos + " intento(s) fallido(s). "
-					+ "Le queda(n) " + oportunidadesRestantes + " oportunidad(es) más antes de perder.");
-		}
+		System.out.println("Incorrecto. " + activo.getNombre() + "El juego continua!!.");
 	}
 
 	private void declararGanador(Jugador jugador) {
