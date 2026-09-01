@@ -84,12 +84,18 @@ public class PersonajeFactory {
 		personajes.add(new Personaje("Gilderoy Lockhart", Genero.MASCULINO, Edad.ADULTO,
 				ColorPelo.AMARILLO, false, false, CasaHogwarts.RAVENCLAW, SangreLimpia.MESTIZO, false));
 		
-		ordenarPorId(personajes);
-
-		return personajes;
+		return ordenar(personajes);
 	}
 
-	private static void ordenarPorId(List<Personaje> personajes) {
-		personajes.sort(Comparator.comparingInt(Personaje::getId));
+	private static List<Personaje> ordenar(List<Personaje> personajes) {
+		personajes.sort(Comparator.comparing(Personaje::getGenero));
+
+		int orden = 1;
+		for (Personaje personaje : personajes) {
+			personaje.asignarOrden(orden);
+			orden++;
+		}
+
+		return personajes;
 	}
 }

@@ -1,8 +1,7 @@
 package model;
 
 public class Personaje {
-	private static int contador = 0; 
-	private int id;
+	private int id = -1;
 	private String nombre;
 	
 	// Atributos generales
@@ -20,7 +19,6 @@ public class Personaje {
 	// Constructor
 	public Personaje(String nombre, Genero genero, Edad edad, ColorPelo colorPelo,
 			boolean calvicie, boolean lentes, CasaHogwarts casa, SangreLimpia sangreLimpia, boolean alumno) {
-		this.id = contador++;
 		this.nombre = nombre;
 		this.genero = genero;
 		this.edad = edad;
@@ -70,6 +68,13 @@ public class Personaje {
 		if (lentes) sb.append(", con lentes");
 		sb.append(alumno ? ", alumno/a" : ", no alumno/a");
 		return sb.toString();
+	}
+
+	public void asignarOrden(int orden) {
+		if (this.id != -1) {
+			throw new IllegalStateException("El personaje '" + nombre + "' ya fue dispuesto en la lista ordenada.");
+		}
+		this.id = orden;
 	}
 
 	// Getters
