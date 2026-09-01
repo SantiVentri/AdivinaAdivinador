@@ -9,6 +9,7 @@ scores.txt
 
 # Carpetas de salida de compilación
 bin/
+bin-test/
 target/
 build/
 out/
