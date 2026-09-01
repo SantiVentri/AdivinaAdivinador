@@ -19,4 +19,17 @@ public class FiltroAplicado {
         return valor;
     }
 
+    // Clave canónica de la pregunta, usada por el historial y las máquinas: "TIPO=valor"
+    public String clave() {
+        return clave(tipo, valor);
+    }
+
+    public static String clave(TipoFiltro tipo, String valor) {
+        return tipo.name() + "=" + valor;
+    }
+
+    @Override
+    public String toString() {
+        return clave();
+    }
 }

@@ -30,25 +30,38 @@ public class JugadorHumano extends Jugador {
 	@Override
 	public Personaje arriesgarPersonaje() {
 		getTablero().mostrar();
-		System.out.print("\nEscribí el nombre del personaje que creés que es (o 'cancelar'):\n>> ");
-		String entrada = scanner.nextLine().trim();
 
-		if (entrada.equalsIgnoreCase("cancelar")) {
-			return null;
-		}
+		while (true) {
+			System.out.println("\nEs tu turno. ¿Qué querés hacer?");
+			System.out.println("1. Arriesgar un personaje");
+			System.out.println("2. Hacer una pregunta");
+			int opcion = leerOpcionEnRango(2);
 
-		Personaje elegido = getTablero().buscarPorNombre(entrada);
-		if (elegido == null) {
-			System.out.println("No encontré ese personaje entre los restantes.");
+			if (opcion == 2) {
+				return null;
+			}
+
+			System.out.print("\nEscribí el nombre del personaje (o 0 para volver):\n>> ");
+			String entrada = scanner.nextLine().trim();
+
+			if (entrada.equals("0")) {
+				continue;
+			}
+
+			Personaje elegido = getTablero().buscarPorNombre(entrada);
+			if (elegido == null) {
+				System.out.println("No encontré ese personaje entre los restantes.");
+				continue;
+			}
+			return elegido;
 		}
-		return elegido;
 	}
 
 	private TipoFiltro elegirTipoFiltro() {
 		TipoFiltro[] tipos = TipoFiltro.values();
 		System.out.println("\n¿Sobre qué característica querés preguntar?");
 		for (int i = 0; i < tipos.length; i++) {
-			System.out.println((i + 1) + ". " + tipos[i]);
+			System.out.println((i + 1) + ". " + tipos[i].toString().replace("_", " "));
 		}
 		int opcion = leerOpcionEnRango(tipos.length);
 		return tipos[opcion - 1];
@@ -57,15 +70,15 @@ public class JugadorHumano extends Jugador {
 	private String elegirValor(TipoFiltro tipo) {
 		switch (tipo) {
 			case GENERO:
-				return elegirValorEnum(Genero.values());
+				return elegirValorEnum(Genero.values()).toLowerCase();
 			case EDAD:
-				return elegirValorEnum(Edad.values());
+				return elegirValorEnum(Edad.values()).toLowerCase();
 			case COLOR_PELO:
-				return elegirValorEnum(ColorPelo.values());
+				return elegirValorEnum(ColorPelo.values()).toLowerCase();
 			case CASA_HOGWARTS:
-				return elegirValorEnum(CasaHogwarts.values());
+				return elegirValorEnum(CasaHogwarts.values()).toLowerCase();
 			case SANGRE_LIMPIA:
-				return elegirValorEnum(SangreLimpia.values());
+				return elegirValorEnum(SangreLimpia.values()).toLowerCase();
 			case CALVICIE:
 				return elegirValorBooleano("¿Es calvo/a?");
 			case LENTES:

@@ -2,6 +2,10 @@ package main;
 
 import java.util.Scanner;
 
+import game.ModoJugadorVsMaquinas;
+import game.ModoMaquinaVsMaquina;
+import score.ScoreRepository;
+
 public class Main {
 
 	private static final Scanner scanner = new Scanner(System.in);
@@ -41,32 +45,14 @@ public class Main {
 		boolean volver = false;
 		while (!volver) {
 			System.out.println("\nSelecciona un modo para empezar a jugar:");
-			System.out.println("1. Jugador vs. Máquina");
+			System.out.println("1. Jugador vs. Máquinas");
 			System.out.println("2. Máquina vs. Máquina (espectador)");
 			System.out.println("3. Volver atrás");
 			int opcion = leerOpcion();
 
 			switch (opcion) {
-				case 1 -> menuOponente(nombre);
-				case 2 -> iniciarMaquinaVsMaquina();
-				case 3 -> volver = true;
-				default -> System.out.println("Opción inválida.");
-			}
-		}
-	}
-
-	private static void menuOponente(String nombre) {
-		boolean volver = false;
-		while (!volver) {
-			System.out.println("\nSelecciona tu oponente:");
-			System.out.println("1. Máquina Asertiva (Intentará adivinar con preguntas)");
-			System.out.println("2. Máquina Aleatoria (Arriesga en cada turno)");
-			System.out.println("3. Volver atrás");
-			int opcion = leerOpcion();
-
-			switch (opcion) {
-				case 1 -> iniciarJugadorVsMaquina(nombre, "Asertiva");
-				case 2 -> iniciarJugadorVsMaquina(nombre, "Aleatoria");
+				case 1 -> new ModoJugadorVsMaquinas(nombre, scanner).jugar();
+				case 2 -> new ModoMaquinaVsMaquina(scanner).jugar();
 				case 3 -> volver = true;
 				default -> System.out.println("Opción inválida.");
 			}
@@ -97,7 +83,7 @@ public class Main {
 		}
 	}
 
-	private static void iniciarJugadorVsMaquina(String nombre, String tipoMaquina) { }
-	private static void iniciarMaquinaVsMaquina() { }
-	private static void mostrarPuntajes() { }
+	private static void mostrarPuntajes() {
+		new ScoreRepository().mostrar();
+	}
 }
