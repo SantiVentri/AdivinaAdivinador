@@ -31,15 +31,6 @@ public class HistorialConsultas {
         return Collections.unmodifiableList(resultado);
     }
 
-    public boolean yaFuePreguntado(String pregunta) {
-        for (Consulta c : this.consultas) {
-            if (c.getPregunta().equalsIgnoreCase(pregunta.trim())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Igual que yaFuePreguntado pero mirando solo las preguntas hechas por un jugador puntual.
     // Necesario cuando varios jugadores comparten el mismo historial (Máquina vs Máquina).
     public boolean yaFuePreguntado(String nombreJugador, String pregunta) {

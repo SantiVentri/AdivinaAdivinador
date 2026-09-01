@@ -115,7 +115,7 @@ public class MotorJuego {
 
 		// El intento fue incorrecto: ese personaje ya no es una opción posible, se saca del tablero.
 		activo.getTablero().sacarPersonaje(intento);
-		System.out.println("Incorrecto. " + activo.getNombre() + "El juego continua!!.");
+		System.out.println("Incorrecto. " + activo.getNombre() + " El juego continua!!.");
 	}
 
 	private void declararGanador(Jugador jugador) {
