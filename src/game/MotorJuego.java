@@ -8,7 +8,6 @@ import players.HistorialConsultas;
 import players.Jugador;
 
 public class MotorJuego {
-	private static final int MAX_TURNOS_SIN_PROGRESO = 4;
 
 	private final Jugador jugador1;
 	private final Jugador jugador2;
@@ -17,7 +16,6 @@ public class MotorJuego {
 
 	private Jugador ganador;
 	private boolean partidaTerminada;
-	private int turnosSinProgreso;
 
 	public MotorJuego(Jugador jugador1, Jugador jugador2) {
 		this(jugador1, jugador2, new HistorialConsultas());
@@ -59,11 +57,6 @@ public class MotorJuego {
 				break;
 			}
 
-			if (turnosSinProgreso >= MAX_TURNOS_SIN_PROGRESO) {
-				System.out.println("\nNadie avanza hace varios turnos. ¡Empate!");
-				break;
-			}
-
 			jugarTurno(activo, pasivo, numeroTurno);
 
 			if (partidaTerminada) {
@@ -90,7 +83,6 @@ public class MotorJuego {
 		Personaje intento = activo.arriesgarPersonaje();
 
 		if (intento != null) {
-			turnosSinProgreso = 0;
 			resolverIntento(activo, pasivo, intento);
 			return;
 		}
@@ -98,7 +90,6 @@ public class MotorJuego {
 		FiltroAplicado filtro = activo.hacerPregunta();
 		if (filtro == null) {
 			System.out.println(activo.getNombre() + " no tiene más preguntas nuevas para hacer, pasa el turno.");
-			turnosSinProgreso++;
 			return;
 		}
 
@@ -111,8 +102,6 @@ public class MotorJuego {
 		activo.filtrarOpciones(filtro, respuesta);
 		int restantesDespues = activo.getTablero().cantidadRestante();
 		System.out.println(activo.getNombre() + " tiene ahora " + restantesDespues + " personaje(s) posible(s).");
-
-		turnosSinProgreso = (restantesDespues < restantesAntes) ? 0 : turnosSinProgreso + 1;
 	}
 
 	private void resolverIntento(Jugador activo, Jugador pasivo, Personaje intento) {
