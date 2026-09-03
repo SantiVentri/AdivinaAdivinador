@@ -1,9 +1,8 @@
 package main;
 
-import java.util.Scanner;
-
 import game.ModoJugadorVsMaquinas;
 import game.ModoMaquinaVsMaquina;
+import java.util.Scanner;
 import score.ScoreRepository;
 
 public class Main {
@@ -75,7 +74,7 @@ public class Main {
 
 			if (nombre.length() < 3) {
 				System.out.println("Error: El nombre debe tener mínimo 3 letras.");
-			} else if (nombre.length() > 12) {
+			} else if (nombre.length() >= 12) {
 				System.out.println("Error: El nombre debe tener menos de 12 letras.");
 			} else {
 				return nombre;
