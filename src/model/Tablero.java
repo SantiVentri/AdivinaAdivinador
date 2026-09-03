@@ -21,15 +21,13 @@ public class Tablero {
     }
 
     // Filtrado
-    public void aplicarFiltro(TipoFiltro tipo, String valorEsperado) {
+    public void aplicarFiltro(TipoFiltro tipo, String valor, boolean respuestaEsperada) {
         List<Personaje> nuevosRestantes = new ArrayList<>();
-
         for (Personaje p : personajesRestantes) {
-            if (p.cumpleFiltro(tipo, valorEsperado)) {
+            if (p.cumpleFiltro(tipo, valor) == respuestaEsperada) {
                 nuevosRestantes.add(p);
             }
         }
-
         this.personajesRestantes = nuevosRestantes;
     }
 
@@ -43,6 +41,10 @@ public class Tablero {
         }
 
         return contador;
+    }
+    
+    public void sacarPersonaje(Personaje personaje) {
+    	this.personajesRestantes.remove(personaje);
     }
 
     // Consultas

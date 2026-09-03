@@ -4,6 +4,9 @@
 *.ear
 *.jar
 
+# Datos generados en runtime
+scores.txt
+
 # Carpetas de salida de compilación
 bin/
 target/

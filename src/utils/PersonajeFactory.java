@@ -12,7 +12,7 @@ import model.Personaje;
 import model.SangreLimpia;
 
 public class PersonajeFactory {
-	public List<Personaje> crearPersonajes() {
+	public static List<Personaje> crearPersonajes() {
 		List<Personaje> personajes = new ArrayList<Personaje>();
 
 		personajes.add(new Personaje("Harry Potter", Genero.MASCULINO, Edad.ADOLESCENTE,
@@ -84,12 +84,18 @@ public class PersonajeFactory {
 		personajes.add(new Personaje("Gilderoy Lockhart", Genero.MASCULINO, Edad.ADULTO,
 				ColorPelo.AMARILLO, false, false, CasaHogwarts.RAVENCLAW, SangreLimpia.MESTIZO, false));
 		
-		ordenarPorGenero(personajes);
-		
-		return personajes;
+		return ordenar(personajes);
 	}
-	
-	private void ordenarPorGenero(List<Personaje> personajes) {
+
+	private static List<Personaje> ordenar(List<Personaje> personajes) {
 		personajes.sort(Comparator.comparing(Personaje::getGenero));
+
+		int orden = 1;
+		for (Personaje personaje : personajes) {
+			personaje.asignarOrden(orden);
+			orden++;
+		}
+
+		return personajes;
 	}
 }
