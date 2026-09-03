@@ -8,7 +8,7 @@ Juego de consola inspirado en **"¿Quién es quién?"** con temática de Harry P
 - **Modo Máquina vs. Máquina**: mirás como espectador una partida entre la *Máquina Asertiva* y la *Máquina Aleatoria*, avanzando turno a turno con Enter.
 - **Marcador de records** persistido en `scores.txt` (una línea por jugador,
   formato `nombre;victorias`).
-- **22 personajes** del universo de Harry Potter con 8 características filtrables.
+- **23 personajes** del universo de Harry Potter con 8 características filtrables.
 
 ## Cómo ejecutar
 1. Abrir un editor como Eclipse
