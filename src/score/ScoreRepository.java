@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ScoreRepository {
+public class ScoreRepository implements RepositorioPuntajes {
 	private static final String RUTA_ARCHIVO = "scores.txt";
 	private static final String SEPARADOR = ";";
 
@@ -25,23 +25,27 @@ public class ScoreRepository {
 	}
 
 	// Suma una partida ganada al jugador y persiste el cambio en el archivo.
+	@Override
 	public void registrarVictoria(String nombreJugador) {
 		int actuales = puntajes.getOrDefault(nombreJugador, 0);
 		puntajes.put(nombreJugador, actuales + 1);
 		guardar();
 	}
 
+	@Override
 	public int getVictorias(String nombreJugador) {
 		return puntajes.getOrDefault(nombreJugador, 0);
 	}
 
 	// Devuelve el marcador ordenado de mayor a menor cantidad de victorias.
+	@Override
 	public List<Map.Entry<String, Integer>> obtenerPuntajesOrdenados() {
 		List<Map.Entry<String, Integer>> ordenado = new ArrayList<>(puntajes.entrySet());
 		ordenado.sort((a, b) -> b.getValue() - a.getValue());
 		return ordenado;
 	}
 
+	@Override
 	public void mostrar() {
 		if (puntajes.isEmpty()) {
 			System.out.println("\n(Todavía no hay puntajes registrados.)");

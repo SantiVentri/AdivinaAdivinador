@@ -14,6 +14,7 @@ import players.JugadorHumano;
 import players.Jugador;
 import players.MaquinaAleatoria;
 import players.MaquinaAsertiva;
+import score.RepositorioPuntajes;
 import score.ScoreRepository;
 import utils.Consola;
 import utils.PersonajeFactory;
@@ -34,7 +35,7 @@ public class ModoJugadorVsMaquinas {
 		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
-		ScoreRepository scoreRepository = new ScoreRepository();
+		RepositorioPuntajes scoreRepository = new ScoreRepository();
 
 		
 		Consumer<Jugador> pausaTrasMaquina = jugadorQueJugo -> {
