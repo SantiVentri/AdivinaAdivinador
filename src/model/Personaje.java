@@ -2,19 +2,19 @@ package model;
 
 public class Personaje {
 	private int id = -1;
-	private String nombre;
+	private final String nombre;
 	
 	// Atributos generales
-	private Genero genero;
-	private Edad edad;
-	private ColorPelo colorPelo;
-	private boolean calvicie;
-	private boolean lentes;
+	private final Genero genero;
+	private final Edad edad;
+	private final ColorPelo colorPelo;
+	private final boolean calvicie;
+	private final boolean lentes;
 	
 	// Atributos de personaje de Harry Potter
-	private CasaHogwarts casa;
-	private SangreLimpia sangreLimpia;
-	private boolean alumno;
+	private final CasaHogwarts casa;
+	private final SangreLimpia sangreLimpia;
+	private final boolean alumno;
 	
 	// Constructor
 	public Personaje(String nombre, Genero genero, Edad edad, ColorPelo colorPelo,
