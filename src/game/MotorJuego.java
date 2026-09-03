@@ -1,7 +1,6 @@
 package game;
 
 import java.util.function.Consumer;
-
 import model.FiltroAplicado;
 import model.Personaje;
 import players.HistorialConsultas;
@@ -93,7 +92,6 @@ public class MotorJuego {
 			return;
 		}
 
-		int restantesAntes = activo.getTablero().cantidadRestante();
 		boolean respuesta = pasivo.responderPregunta(filtro);
 		historial.agregarConsulta(activo.getNombre(), filtro, respuesta);
 		System.out.println(activo.getNombre() + " pregunta -> " + filtro.getTipo() + " = " + filtro.getValor() + "?");
