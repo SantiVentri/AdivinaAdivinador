@@ -1,0 +1,120 @@
+package model;
+
+public class Personaje {
+	private int id = -1;
+	private final String nombre;
+	
+	// Atributos generales
+	private final Genero genero;
+	private final Edad edad;
+	private final ColorPelo colorPelo;
+	private final boolean calvicie;
+	private final boolean lentes;
+	
+	// Atributos de personaje de Harry Potter
+	private final CasaHogwarts casa;
+	private final SangreLimpia sangreLimpia;
+	private final boolean alumno;
+	
+	// Constructor
+	public Personaje(String nombre, Genero genero, Edad edad, ColorPelo colorPelo,
+			boolean calvicie, boolean lentes, CasaHogwarts casa, SangreLimpia sangreLimpia, boolean alumno) {
+		this.nombre = nombre;
+		this.genero = genero;
+		this.edad = edad;
+		this.colorPelo = colorPelo;
+		this.calvicie = calvicie;
+		this.lentes = lentes;
+		this.casa = casa;
+		this.sangreLimpia = sangreLimpia;
+		this.alumno = alumno;
+	}
+
+	
+	// Métodos
+	public boolean cumpleFiltro(TipoFiltro tipo, String valorEsperado) {
+		switch (tipo) {
+	        case GENERO:
+	            return genero.name().equalsIgnoreCase(valorEsperado);
+	        case EDAD:
+	        	return edad.name().equalsIgnoreCase(valorEsperado);
+	        case COLOR_PELO:
+	            return colorPelo.name().equalsIgnoreCase(valorEsperado);
+	        case CALVICIE:
+	            return calvicie == Boolean.parseBoolean(valorEsperado);
+	        case LENTES:
+	            return lentes == Boolean.parseBoolean(valorEsperado);
+	        case CASA_HOGWARTS:
+	        	return casa.name().equalsIgnoreCase(valorEsperado);
+	        case SANGRE_LIMPIA:
+	        	return sangreLimpia.name().equalsIgnoreCase(valorEsperado);
+	        case ALUMNO:
+	        	return alumno == Boolean.parseBoolean(valorEsperado);
+	        default:
+	            return false;
+		}
+	}	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+			sb.append(nombre)
+			.append(" - ").append(genero.toString().toLowerCase())
+			.append(", ").append(edad.toString().toLowerCase())
+			.append(", pelo ").append(colorPelo.toString().toLowerCase())
+			.append(", ").append(casa.toString().toLowerCase())
+			.append(", ").append(sangreLimpia.toString().toLowerCase());
+		if (calvicie) sb.append(", calvo/a");
+		if (lentes) sb.append(", con lentes");
+		sb.append(alumno ? ", alumno/a" : ", no alumno/a");
+		return sb.toString();
+	}
+
+	public void asignarOrden(int orden) {
+		if (this.id != -1) {
+			throw new IllegalStateException("El personaje '" + nombre + "' ya fue dispuesto en la lista ordenada.");
+		}
+		this.id = orden;
+	}
+
+	// Getters
+	public int getId() {
+		return id;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public Genero getGenero() {
+		return genero;
+	}
+	
+	public Edad getEdad() {
+		return edad;
+	}
+
+	public ColorPelo getColorPelo() {
+		return colorPelo;
+	}
+
+	public boolean esCalvo() {
+		return calvicie;
+	}
+
+	public boolean tieneLentes() {
+		return lentes;
+	}
+	
+	public CasaHogwarts getCasa() {
+		return casa;
+	}
+
+	public SangreLimpia getSangreLimpia() {
+		return sangreLimpia;
+	}
+
+	public boolean esAlumno() {
+		return alumno;
+	}
+}
