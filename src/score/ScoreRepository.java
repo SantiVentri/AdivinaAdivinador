@@ -73,7 +73,7 @@ public class ScoreRepository implements RepositorioPuntajes {
 				}
 				String[] partes = linea.split(SEPARADOR, 2);
 				if (partes.length == 2) {
-					puntajes.put(partes[0], Integer.parseInt(partes[1].trim()));
+					puntajes.put(partes[0], Integer.valueOf(partes[1].trim()));
 				}
 			}
 		} catch (IOException | NumberFormatException e) {
