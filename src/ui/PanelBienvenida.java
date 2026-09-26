@@ -6,10 +6,27 @@ import java.awt.*;
 public class PanelBienvenida {
     private JPanel raiz;
     private JLabel lblTitulo;
-    private JButton btnContinuar;
+    private JPanel form;
+    private JTextField txtNombre;
+    private JButton btnConfirmar;
 
     public PanelBienvenida(VentanaPrincipal ventana) {
-        btnContinuar.addActionListener(e -> ventana.mostrarPantalla("MENU"));
+        btnConfirmar.addActionListener(e -> continuar(ventana));
+    }
+
+    public void continuar(VentanaPrincipal ventana) {
+        String nombre = txtNombre.getText().trim();
+
+        if (!nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ]{3,11}")) {
+            JOptionPane.showMessageDialog(raiz,
+                    "El nombre debe tener entre 3 y 11 letras, sin números ni espacios.",
+                    "Nombre inválido", JOptionPane.WARNING_MESSAGE);
+            txtNombre.requestFocus();
+            return;
+        }
+
+        ventana.setNombreJugador(nombre);
+        ventana.mostrarPantalla("MENU");
     }
 
     public JPanel getRaiz() {
@@ -45,19 +62,37 @@ public class PanelBienvenida {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         raiz.add(lblTitulo, gbc);
-        btnContinuar = new JButton();
-        btnContinuar.setText("Continuar");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        raiz.add(btnContinuar, gbc);
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.VERTICAL;
         raiz.add(spacer1, gbc);
+        form = new JPanel();
+        form.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        form.setBackground(new Color(-1));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        raiz.add(form, gbc);
+        txtNombre = new JTextField();
+        txtNombre.setColumns(15);
+        txtNombre.setHorizontalAlignment(2);
+        txtNombre.setText("");
+        form.add(txtNombre);
+        btnConfirmar = new JButton();
+        btnConfirmar.setText("Confirmar");
+        form.add(btnConfirmar);
+        final JLabel label1 = new JLabel();
+        label1.setForeground(new Color(-16777216));
+        label1.setHorizontalAlignment(0);
+        label1.setText("¿Cuál es tu nombre?");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        raiz.add(label1, gbc);
     }
 
     /**
