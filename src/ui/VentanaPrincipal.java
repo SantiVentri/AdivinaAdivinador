@@ -66,15 +66,23 @@ public class VentanaPrincipal extends JFrame {
 
     public void iniciarJugadorVsMaquinas(Personaje secreto, List<Personaje> personajes) {
         ModoJugadorVsMaquinas modo = new ModoJugadorVsMaquinas(nombreJugador, secreto, personajes);
-        iniciarPartida(1);
+        iniciarPartida(modo);
     }
 
     public void iniciarPartida(int modo) {
+        iniciarPantallaDeJuego(null);
+    }
+
+    public void iniciarPartida(ModoJugadorVsMaquinas modo) {
+        iniciarPantallaDeJuego(modo);
+    }
+
+    private void iniciarPantallaDeJuego(ModoJugadorVsMaquinas modo) {
         if (panelJuego != null) {
             panelJuego.detener();
             contenedor.remove(panelJuego.getRaiz());
         }
-        panelJuego = new PanelJuego(this);
+        panelJuego = new PanelJuego(this, modo);
         contenedor.add(panelJuego.getRaiz(), "JUEGO");
         mostrarPantalla("JUEGO");
     }

@@ -1,10 +1,14 @@
 package ui;
 
+import game.ModoJugadorVsMaquinas;
+import model.FiltroAplicado;
+import model.Personaje;
 import utils.PersonajeFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.List;
 
 public class PanelJuego {
     private static final Dimension TAM_TABLERO = new Dimension(600, 400);
@@ -15,17 +19,118 @@ public class PanelJuego {
     private JPanel contenedorTablero;
     private JPanel contenedorRegistros;
     private JPanel contenedorFiltros;
+    private JButton btnTerminarPartida;
+    private JButton btnArriesgarPersonaje;
 
     private final PanelTablero tablero = new PanelTablero();
+    private final PanelFiltros filtros = new PanelFiltros();
+    private final VentanaPrincipal ventana;
+    private final ModoJugadorVsMaquinas modo;
 
-    public PanelJuego(VentanaPrincipal ventana) {
+    public PanelJuego(VentanaPrincipal ventana, ModoJugadorVsMaquinas modo) {
+        this.ventana = ventana;
+        this.modo = modo;
+
         fijarTamanio(contenedorTablero, TAM_TABLERO);
         fijarTamanio(contenedorFiltros, TAM_FILTROS);
         fijarTamanio(contenedorRegistros, TAM_REGISTROS);
 
         contenedorTablero.setLayout(new BorderLayout());
         contenedorTablero.add(tablero, BorderLayout.CENTER);
-        tablero.mostrar(PersonajeFactory.crearPersonajes(), null);
+
+        contenedorFiltros.setLayout(new BorderLayout());
+        contenedorFiltros.add(filtros.getRaiz(), BorderLayout.CENTER);
+
+        btnTerminarPartida.addActionListener(e -> terminarPartida());
+        btnArriesgarPersonaje.addActionListener(e -> activarModoArriesgo());
+
+        if (modo != null) {
+            filtros.setAlPreguntar(this::preguntar);
+            tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
+            mostrarMensajes();
+        } else {
+            // Modo Máquina vs. Máquina todavía no está conectado a esta pantalla.
+            filtros.setHabilitado(false);
+            btnArriesgarPersonaje.setEnabled(false);
+            tablero.mostrar(PersonajeFactory.crearPersonajes(), null);
+        }
+    }
+
+    // ---------- Interacción con el modo de juego ----------
+
+    private void preguntar(FiltroAplicado filtro) {
+        modo.preguntar(filtro);
+        mostrarMensajes();
+        actualizarEstado();
+    }
+
+    private void actualizarEstado() {
+        tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
+
+        if (modo.isDesafioTerminado()) {
+            filtros.setHabilitado(false);
+            btnArriesgarPersonaje.setEnabled(false);
+            // El desafío terminó (ganaste las dos rondas, perdiste o empataste): volvemos a elegir modo.
+            ventana.mostrarPantalla("MODOS");
+        } else if (modo.isEsperandoContinuar()) {
+            filtros.setHabilitado(false);
+            btnArriesgarPersonaje.setEnabled(false);
+            JOptionPane.showMessageDialog(raiz,
+                    "¡Ganaste la ronda! Ahora te enfrentás a la Máquina Asertiva.",
+                    "Ronda superada", JOptionPane.INFORMATION_MESSAGE);
+            modo.continuarARonda2();
+            mostrarMensajes();
+            tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
+            filtros.setHabilitado(true);
+            btnArriesgarPersonaje.setEnabled(true);
+        }
+    }
+
+    // El jugador decide terminar la partida en cualquier momento y volver a elegir modo.
+    private void terminarPartida() {
+        int respuesta = JOptionPane.showConfirmDialog(
+                raiz,
+                "¿Seguro que querés terminar la partida?",
+                "Terminar partida",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (respuesta == JOptionPane.YES_OPTION) {
+            ventana.mostrarPantalla("MODOS");
+        }
+    }
+
+    // Pone el tablero en modo selección: el próximo clic en una tarjeta arriesga ese personaje.
+    private void activarModoArriesgo() {
+        tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(),
+                e -> confirmarArriesgo((TarjetaPersonaje) e.getSource()));
+    }
+
+    private void confirmarArriesgo(TarjetaPersonaje tarjeta) {
+        Personaje elegido = tarjeta.getPersonaje();
+        int respuesta = JOptionPane.showConfirmDialog(
+                raiz,
+                "¿Arriesgar \"" + elegido.getNombre() + "\" como el personaje secreto del rival?",
+                "Arriesgar personaje",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (respuesta == JOptionPane.YES_OPTION) {
+            modo.arriesgar(elegido);
+            mostrarMensajes();
+            actualizarEstado();
+        } else {
+            // Cancela el modo selección sin arriesgar nada.
+            tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
+        }
+    }
+
+    // Vuelca al usuario, en un diálogo, los mensajes que dejó pendientes el Registro
+    // (respuesta del rival, jugada de la máquina, fin de ronda, etc.).
+    private void mostrarMensajes() {
+        List<String> mensajes = modo.getRegistro().retirarMensajes();
+        if (!mensajes.isEmpty()) {
+            JOptionPane.showMessageDialog(raiz, String.join("\n", mensajes), "Jugada", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private static void fijarTamanio(JComponent c, Dimension d) {
@@ -92,6 +197,31 @@ public class PanelJuego {
         gbc.insets = new Insets(5, 5, 5, 5);
         raiz.add(contenedorRegistros, gbc);
         contenedorRegistros.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        final JPanel spacer1 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        contenedorRegistros.add(spacer1, gbc);
+        btnTerminarPartida = new JButton();
+        btnTerminarPartida.setText("Terminar partida");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 0, 5);
+        contenedorRegistros.add(btnTerminarPartida, gbc);
+        btnArriesgarPersonaje = new JButton();
+        btnArriesgarPersonaje.setText("Arriesgar personaje");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        contenedorRegistros.add(btnArriesgarPersonaje, gbc);
     }
 
     /**
