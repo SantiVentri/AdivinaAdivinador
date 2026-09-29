@@ -23,7 +23,7 @@ public class PanelFiltros {
 
     private final CardLayout cartas = new CardLayout();
     private final JPanel panelFiltros = new JPanel();
-    private final JPanel panelValores = new JPanel(new BorderLayout());
+    private final JPanel panelValores = new JPanel(new BorderLayout(0, SEPARACION));
     private final JPanel contenedorValores = new JPanel();
 
     private Consumer<FiltroAplicado> alPreguntar;
@@ -133,7 +133,7 @@ public class PanelFiltros {
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         raiz.add(lblTitulo, gbc);
         contenedorBotones = new JPanel();
@@ -141,11 +141,23 @@ public class PanelFiltros {
         contenedorBotones.setBackground(new Color(-1));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         raiz.add(contenedorBotones, gbc);
+        final JPanel spacer1 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        raiz.add(spacer1, gbc);
+        final JPanel spacer2 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        raiz.add(spacer2, gbc);
     }
 
     /**
