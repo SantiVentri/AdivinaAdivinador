@@ -3,15 +3,12 @@ package players;
 import java.util.List;
 import java.util.Random;
 
-import model.CasaHogwarts;
-import model.ColorPelo;
-import model.Edad;
+import model.Filtro;
 import model.FiltroAplicado;
-import model.Genero;
 import model.Personaje;
-import model.SangreLimpia;
 import model.Tablero;
 import model.TipoFiltro;
+import utils.FiltroFactory;
 import utils.Registro;
 
 public class MaquinaAleatoria extends Jugador {
@@ -20,6 +17,7 @@ public class MaquinaAleatoria extends Jugador {
 	private final Random random = new Random();
     private final HistorialConsultas historial;
     private final Registro registro;
+    private final List<Filtro> filtros = FiltroFactory.crearFiltros();
 
     public MaquinaAleatoria(Tablero tablero, HistorialConsultas historial, Registro registro) {
         super("Máquina Aleatoria", tablero);
@@ -29,16 +27,17 @@ public class MaquinaAleatoria extends Jugador {
 
 	@Override
 	public FiltroAplicado hacerPregunta() {
-		TipoFiltro[] tipos = TipoFiltro.values();
-		TipoFiltro tipo;
-		String valor;
-		int intentos = 0;
+        TipoFiltro tipo;
+        String valor;
+        int intentos = 0;
 
-		do {
-			tipo = tipos[random.nextInt(tipos.length)];
-			valor = elegirValorAlAzar(tipo);
-			intentos++;
-		} while (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor)) && intentos < 50);
+        do {
+            Filtro filtro = filtros.get(random.nextInt(filtros.size()));
+            String[] valores = filtro.getValores();
+            tipo = filtro.getTipo();
+            valor = valores[random.nextInt(valores.length)];
+            intentos++;
+        } while (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor)) && intentos < 50);
 
 		registro.registrar("[Máquina Aleatoria] No analizo nada, pregunto al azar: " + tipo + "=" + valor);
 
@@ -67,30 +66,4 @@ public class MaquinaAleatoria extends Jugador {
 
 		return elegido;
 	}
-
-	private String elegirValorAlAzar(TipoFiltro tipo) {
-		switch (tipo) {
-			case GENERO:
-				return valorAlAzar(Genero.values());
-			case EDAD:
-				return valorAlAzar(Edad.values());
-			case COLOR_PELO:
-				return valorAlAzar(ColorPelo.values());
-			case CASA_HOGWARTS:
-				return valorAlAzar(CasaHogwarts.values());
-			case SANGRE_LIMPIA:
-				return valorAlAzar(SangreLimpia.values());
-			case CALVICIE:
-			case LENTES:
-			case ALUMNO:
-				return String.valueOf(random.nextBoolean());
-			default:
-				throw new IllegalStateException("Tipo de filtro no soportado: " + tipo);
-		}
-	}
-
-	private <T extends Enum<T>> String valorAlAzar(T[] valores) {
-		return valores[random.nextInt(valores.length)].name();
-	}
-
 }

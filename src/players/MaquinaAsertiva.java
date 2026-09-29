@@ -2,21 +2,19 @@ package players;
 
 import java.util.List;
 import java.util.Random;
-import model.CasaHogwarts;
-import model.ColorPelo;
-import model.Edad;
+import model.Filtro;
 import model.FiltroAplicado;
-import model.Genero;
 import model.Personaje;
-import model.SangreLimpia;
 import model.Tablero;
 import model.TipoFiltro;
+import utils.FiltroFactory;
 import utils.Registro;
 
 public class MaquinaAsertiva extends Jugador {
 	private final Random random = new Random();
     private final HistorialConsultas historial;
     private final Registro registro;
+    private final List<Filtro> filtros = FiltroFactory.crearFiltros();
 
     public MaquinaAsertiva(Tablero tablero, HistorialConsultas historial, Registro registro) {
         super("Máquina Asertiva", tablero);
@@ -48,8 +46,9 @@ public class MaquinaAsertiva extends Jugador {
 		FiltroAplicado mejorFiltro = null;
 		double mejorDiferencia = Double.MAX_VALUE;
 
-		for (TipoFiltro tipo : TipoFiltro.values()) {
-			for (String valor : valoresPosibles(tipo)) {
+        for (Filtro filtro : filtros) {
+            TipoFiltro tipo = filtro.getTipo();
+            for (String valor : filtro.getValores()) {
 				if (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor))) {
 					continue;
 				}
@@ -92,35 +91,6 @@ public class MaquinaAsertiva extends Jugador {
 		System.out.println("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
 
 		return elegido;
-	}
-
-	private String[] valoresPosibles(TipoFiltro tipo) {
-		switch (tipo) {
-			case GENERO:
-				return nombresDe(Genero.values());
-			case EDAD:
-				return nombresDe(Edad.values());
-			case COLOR_PELO:
-				return nombresDe(ColorPelo.values());
-			case CASA_HOGWARTS:
-				return nombresDe(CasaHogwarts.values());
-			case SANGRE_LIMPIA:
-				return nombresDe(SangreLimpia.values());
-			case CALVICIE:
-			case LENTES:
-			case ALUMNO:
-				return new String[] { "true", "false" };
-			default:
-				throw new IllegalStateException("Tipo de filtro no soportado: " + tipo);
-		}
-	}
-
-	private <T extends Enum<T>> String[] nombresDe(T[] valores) {
-		String[] nombres = new String[valores.length];
-		for (int i = 0; i < valores.length; i++) {
-			nombres[i] = valores[i].name();
-		}
-		return nombres;
 	}
 
 }
