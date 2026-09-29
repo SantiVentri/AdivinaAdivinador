@@ -1,20 +1,58 @@
 package ui;
 
-import javax.swing.*;
-import java.awt.*;
+import score.RepositorioPuntajes;
+import score.ScoreRepository;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+import java.util.Map;
+
+// Pantalla del marcador de records: puesto, jugador y partidas ganadas,
+// ordenado de mayor a menor. Si no hay puntajes muestra un mensaje.
 public class PanelPuntajes {
+    private static final String[] COLUMNAS = {"Puesto", "Jugador", "Partidas ganadas"};
 
     private JPanel raiz;
     private JLabel lblTitulo;
+    private JScrollPane scrollTabla;
+    private JTable tablaPuntajes;
+    private JLabel lblSinPuntajes;
     private JButton btnSalir;
 
+    private final DefaultTableModel modeloTabla = new DefaultTableModel(COLUMNAS, 0) {
+        @Override
+        public boolean isCellEditable(int fila, int columna) {
+            return false;
+        }
+    };
+
     public PanelPuntajes(VentanaPrincipal ventana) {
+        tablaPuntajes.setModel(modeloTabla);
+        tablaPuntajes.getTableHeader().setReorderingAllowed(false);
+        tablaPuntajes.setRowSelectionAllowed(false);
+        tablaPuntajes.setFocusable(false);
+
         btnSalir.addActionListener(e -> ventana.mostrarPantalla("MENU"));
     }
 
+    // Se llama antes de mostrar la pantalla, así la tabla refleja las partidas recién jugadas.
     public void cargar() {
+        // Instancia nueva para releer el archivo: la partida registra las victorias con su propio repositorio.
+        RepositorioPuntajes repositorio = new ScoreRepository();
+        List<Map.Entry<String, Integer>> puntajes = repositorio.obtenerPuntajesOrdenados();
 
+        modeloTabla.setRowCount(0);
+        int puesto = 1;
+        for (Map.Entry<String, Integer> entrada : puntajes) {
+            modeloTabla.addRow(new Object[]{puesto, entrada.getKey(), entrada.getValue()});
+            puesto++;
+        }
+
+        boolean hayPuntajes = !puntajes.isEmpty();
+        scrollTabla.setVisible(hayPuntajes);
+        lblSinPuntajes.setVisible(!hayPuntajes);
     }
 
     public JPanel getRaiz() {
@@ -47,21 +85,40 @@ public class PanelPuntajes {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(20, 20, 10, 20);
         raiz.add(lblTitulo, gbc);
+        scrollTabla = new JScrollPane();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 20, 10, 20);
+        raiz.add(scrollTabla, gbc);
+        tablaPuntajes = new JTable();
+        scrollTabla.setViewportView(tablaPuntajes);
+        lblSinPuntajes = new JLabel();
+        lblSinPuntajes.setForeground(new Color(-16777216));
+        lblSinPuntajes.setHorizontalAlignment(0);
+        lblSinPuntajes.setText("Todavía no hay puntajes registrados.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 20, 10, 20);
+        raiz.add(lblSinPuntajes, gbc);
         btnSalir = new JButton();
         btnSalir.setText("Volver");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = 3;
+        gbc.insets = new Insets(0, 20, 20, 20);
         raiz.add(btnSalir, gbc);
-        final JPanel spacer1 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        raiz.add(spacer1, gbc);
     }
 
     /**
