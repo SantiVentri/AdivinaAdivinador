@@ -12,7 +12,7 @@ public class PanelModosDeJuego {
     private JButton btnSalir;
 
     public PanelModosDeJuego(VentanaPrincipal ventana) {
-        btnModo1.addActionListener(e -> ventana.iniciarPartida(1));
+        btnModo1.addActionListener(e -> ventana.mostrarEleccionPersonaje());
         btnModo2.addActionListener(e -> ventana.iniciarPartida(2));
         btnSalir.addActionListener(e -> ventana.mostrarPantalla("MENU"));
     }

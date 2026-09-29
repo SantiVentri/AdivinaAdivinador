@@ -1,13 +1,18 @@
 package ui;
 
+import game.ModoJugadorVsMaquinas;
+import model.Personaje;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class VentanaPrincipal extends JFrame {
     private final CardLayout cards = new CardLayout();
     private final JPanel contenedor = new JPanel(cards);
     private final PanelPuntajes panelPuntajes;
     private PanelJuego panelJuego;
+    private PanelEleccionPersonaje panelEleccion;
 
     private String nombreJugador;
 
@@ -33,6 +38,20 @@ public class VentanaPrincipal extends JFrame {
 
     public void mostrarPantalla(String nombre) {
         cards.show(contenedor, nombre);
+    }
+
+    public void mostrarEleccionPersonaje() {
+        if (panelEleccion != null) {
+            contenedor.remove(panelEleccion.getRaiz());
+        }
+        panelEleccion = new PanelEleccionPersonaje(this);
+        contenedor.add(panelEleccion.getRaiz(), "ELECCION");
+        mostrarPantalla("ELECCION");
+    }
+
+    public void iniciarJugadorVsMaquinas(Personaje secreto, List<Personaje> personajes) {
+        ModoJugadorVsMaquinas modo = new ModoJugadorVsMaquinas(nombreJugador, secreto, personajes);
+        iniciarPartida(1);
     }
 
     public void iniciarPartida(int modo) {
