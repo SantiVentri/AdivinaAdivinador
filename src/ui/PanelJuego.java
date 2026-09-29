@@ -1,23 +1,37 @@
 package ui;
 
+import utils.PersonajeFactory;
+
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class PanelJuego {
-    private JPanel raiz;
-    private JLabel lblTitulo;
-    private JLabel lblModo;
+    private static final Dimension TAM_TABLERO = new Dimension(600, 400);
+    private static final Dimension TAM_FILTROS = new Dimension(400, 150);
+    private static final Dimension TAM_REGISTROS = new Dimension(250, 520);
 
-    public PanelJuego(VentanaPrincipal ventana, int modo) {
-        switch (modo) {
-            case 1:
-                lblModo.setText("Modo de juego: 1");
-                return;
-            case 2:
-                lblModo.setText("Modo de juego: 2");
-            default:
-                lblModo.setText("No se encontró el modo de juego.");
-        }
+    private JPanel raiz;
+    private JPanel contenedorTablero;
+    private JPanel contenedorRegistros;
+    private JPanel contenedorFiltros;
+
+    private final PanelTablero tablero = new PanelTablero();
+
+    public PanelJuego(VentanaPrincipal ventana) {
+        fijarTamanio(contenedorTablero, TAM_TABLERO);
+        fijarTamanio(contenedorFiltros, TAM_FILTROS);
+        fijarTamanio(contenedorRegistros, TAM_REGISTROS);
+
+        contenedorTablero.setLayout(new BorderLayout());
+        contenedorTablero.add(tablero, BorderLayout.CENTER);
+        tablero.mostrar(PersonajeFactory.crearPersonajes(), null);
+    }
+
+    private static void fijarTamanio(JComponent c, Dimension d) {
+        c.setPreferredSize(d);
+        c.setMinimumSize(d);
+        c.setMaximumSize(d);
     }
 
     public void detener() {
@@ -46,36 +60,38 @@ public class PanelJuego {
         raiz = new JPanel();
         raiz.setLayout(new GridBagLayout());
         raiz.setBackground(new Color(-1));
-        lblTitulo = new JLabel();
-        lblTitulo.setForeground(new Color(-16777216));
-        lblTitulo.setHorizontalAlignment(0);
-        lblTitulo.setText("Juego");
+        contenedorTablero = new JPanel();
+        contenedorTablero.setLayout(new GridBagLayout());
+        contenedorTablero.setBackground(new Color(-1));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        raiz.add(lblTitulo, gbc);
-        final JPanel spacer1 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        raiz.add(spacer1, gbc);
-        final JPanel spacer2 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        raiz.add(spacer2, gbc);
-        lblModo = new JLabel();
-        lblModo.setBackground(new Color(-16777216));
-        lblModo.setText("Modo de juego: ");
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        raiz.add(contenedorTablero, gbc);
+        contenedorTablero.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        contenedorFiltros = new JPanel();
+        contenedorFiltros.setLayout(new GridBagLayout());
+        contenedorFiltros.setBackground(new Color(-1));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        raiz.add(lblModo, gbc);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        raiz.add(contenedorFiltros, gbc);
+        contenedorFiltros.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        contenedorRegistros = new JPanel();
+        contenedorRegistros.setLayout(new GridBagLayout());
+        contenedorRegistros.setBackground(new Color(-1));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        raiz.add(contenedorRegistros, gbc);
+        contenedorRegistros.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
     }
 
     /**

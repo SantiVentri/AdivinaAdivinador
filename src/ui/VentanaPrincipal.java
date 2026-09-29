@@ -8,6 +8,8 @@ import java.awt.*;
 import java.util.List;
 
 public class VentanaPrincipal extends JFrame {
+    private static final Dimension TAM_VENTANA = new Dimension(900, 600);
+
     private final CardLayout cards = new CardLayout();
     private final JPanel contenedor = new JPanel(cards);
     private final PanelPuntajes panelPuntajes;
@@ -29,7 +31,7 @@ public class VentanaPrincipal extends JFrame {
         contenedor.add(panelPuntajes.getRaiz(), "PUNTAJES");
 
         setContentPane(contenedor);
-        setSize(900, 600);
+        setSize(TAM_VENTANA);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -38,6 +40,19 @@ public class VentanaPrincipal extends JFrame {
 
     public void mostrarPantalla(String nombre) {
         cards.show(contenedor, nombre);
+
+        // La pantalla de juego define su propio tamaño (suma de sus paneles);
+        // el resto usa el tamaño fijo de la ventana.
+        Dimension anterior = getSize();
+        if ("JUEGO".equals(nombre)) {
+            contenedor.setPreferredSize(panelJuego.getRaiz().getPreferredSize());
+            pack();
+        } else {
+            setSize(TAM_VENTANA);
+        }
+        if (!getSize().equals(anterior)) {
+            setLocationRelativeTo(null);
+        }
     }
 
     public void mostrarEleccionPersonaje() {
@@ -59,7 +74,7 @@ public class VentanaPrincipal extends JFrame {
             panelJuego.detener();
             contenedor.remove(panelJuego.getRaiz());
         }
-        panelJuego = new PanelJuego(this, modo);
+        panelJuego = new PanelJuego(this);
         contenedor.add(panelJuego.getRaiz(), "JUEGO");
         mostrarPantalla("JUEGO");
     }
