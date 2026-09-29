@@ -2,7 +2,6 @@ package game;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 import model.Personaje;
 import model.Tablero;
@@ -10,43 +9,59 @@ import players.HistorialConsultas;
 import players.Jugador;
 import players.MaquinaAleatoria;
 import players.MaquinaAsertiva;
-import utils.Consola;
 import utils.PersonajeFactory;
 import utils.Registro;
 
-
+// Controla una partida Máquina Asertiva vs Máquina Aleatoria, en la que el usuario es espectador
+// y avanza de a un turno con el botón "Siguiente turno".
 public class ModoMaquinaVsMaquina {
-	private final Random random = new Random();
-	private final Scanner scanner;
+    private final Random random = new Random();
+    private final Registro registro = new Registro();
+    private final MotorJuego motor;
 
-	public ModoMaquinaVsMaquina(Scanner scanner) {
-		this.scanner = scanner;
-	}
+    // La máquina cuyo tablero se muestra en pantalla: la que acaba de jugar.
+    private Jugador jugadorMostrado;
 
-	public void jugar() {
-		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
-		HistorialConsultas historial = new HistorialConsultas();
-        Registro registro = new Registro();
+    public ModoMaquinaVsMaquina() {
+        List<Personaje> personajes = PersonajeFactory.crearPersonajes();
+        HistorialConsultas historial = new HistorialConsultas();
 
-		MaquinaAsertiva asertiva = new MaquinaAsertiva(new Tablero(personajes), historial, registro);
-		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
+        MaquinaAsertiva asertiva = new MaquinaAsertiva(new Tablero(personajes), historial, registro);
+        MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
 
-		asertiva.elegirPersonaje(azar(personajes));
-		aleatoria.elegirPersonaje(azar(personajes));
+        asertiva.elegirPersonaje(azar(personajes));
+        aleatoria.elegirPersonaje(azar(personajes));
 
-        registro.registrar("\n########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
+        registro.registrar("########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
 
-		Jugador ganador = new MotorJuego(asertiva, aleatoria, historial,
-				jugadorQueJugo -> Consola.esperarEnter(scanner), registro).jugar();
+        motor = new MotorJuego(asertiva, aleatoria, historial, registro);
+        motor.iniciar();
+        jugadorMostrado = motor.getJugadorActivo();
+    }
 
-		if (ganador == null) {
-            registro.registrar("\nLa partida terminó en empate.");
-		} else {
-            registro.registrar("\nGanó: " + ganador.getNombre());
-		}
-	}
+    public void siguienteTurno() {
+        if (motor.isPartidaTerminada()) {
+            return;
+        }
+        jugadorMostrado = motor.getJugadorActivo();
+        motor.jugarTurnoMaquina();
+    }
 
-	private Personaje azar(List<Personaje> personajes) {
-		return personajes.get(random.nextInt(personajes.size()));
-	}
+    private Personaje azar(List<Personaje> personajes) {
+        return personajes.get(random.nextInt(personajes.size()));
+    }
+
+    // ---------- Consultas para la pantalla ----------
+
+    public Registro getRegistro() {
+        return registro;
+    }
+
+    public Jugador getJugadorMostrado() {
+        return jugadorMostrado;
+    }
+
+    public boolean isPartidaTerminada() {
+        return motor.isPartidaTerminada();
+    }
 }

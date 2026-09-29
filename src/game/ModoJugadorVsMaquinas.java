@@ -2,8 +2,6 @@ package game;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
-import java.util.function.Consumer;
 
 import model.FiltroAplicado;
 import model.Personaje;
@@ -11,117 +9,168 @@ import model.Tablero;
 import players.Consulta;
 import players.HistorialConsultas;
 import players.JugadorHumano;
-import players.Jugador;
 import players.MaquinaAleatoria;
 import players.MaquinaAsertiva;
 import score.RepositorioPuntajes;
 import score.ScoreRepository;
-import utils.Consola;
-import utils.PersonajeFactory;
 import utils.Registro;
 
-
+// Controla el desafío Jugador vs Máquinas: ronda 1 contra la Máquina Aleatoria y,
+// si el jugador la gana, ronda 2 contra la Máquina Asertiva (que hereda las preguntas de la primera).
+// La pantalla de juego llama a preguntar/arriesgar/continuarARonda2 y después consulta el estado.
 public class ModoJugadorVsMaquinas {
-	private final String nombre;
-	private final Scanner scanner;
-	private final Random random = new Random();
+    private final String nombre;
+    private final Personaje secretoJugador;
+    private final Random random = new Random();
 
-	public ModoJugadorVsMaquinas(String nombre, Scanner scanner) {
-		this.nombre = nombre;
-		this.scanner = scanner;
-	}
+    private final List<Personaje> personajes;
+    private final HistorialConsultas historial = new HistorialConsultas();
+    private final Registro registro = new Registro();
+    private final RepositorioPuntajes scoreRepository = new ScoreRepository();
 
-	public void jugar() {
-		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
-		HistorialConsultas historial = new HistorialConsultas();
-        Registro registro = new Registro();
-		RepositorioPuntajes scoreRepository = new ScoreRepository();
+    private JugadorHumano jugador;
+    private MaquinaAleatoria aleatoria;
+    private MotorJuego motor;
 
-		registro.registrar("\n########## JUGADOR vs MÁQUINAS ##########");
+    private int ronda;
+    private boolean esperandoContinuar;
+    private boolean desafioTerminado;
 
-		Consumer<Jugador> pausaTrasMaquina = jugadorQueJugo -> {
-			if (!(jugadorQueJugo instanceof JugadorHumano)) {
-				Consola.esperarEnter(scanner);
-			}
-		};
+    public ModoJugadorVsMaquinas(String nombre, Personaje secretoJugador, List<Personaje> personajes) {
+        this.nombre = nombre;
+        this.secretoJugador = secretoJugador;
+        this.personajes = personajes;
 
-		Personaje secretoJugador = elegirPersonajeSecreto(personajes);
-		
-		JugadorHumano jugador1 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
-		jugador1.elegirPersonaje(secretoJugador);
+        registro.registrar("########## JUGADOR vs MÁQUINAS ##########");
+        registro.registrar("Tu personaje secreto es: " + secretoJugador.getNombre());
+        iniciarRonda1();
+    }
 
-		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
-		aleatoria.elegirPersonaje(azar(personajes));
+    // ---------- Acciones del jugador (las llama la pantalla) ----------
 
-		Jugador ganador1 = new MotorJuego(jugador1, aleatoria, historial, pausaTrasMaquina, registro).jugar();
+    public void preguntar(FiltroAplicado filtro) {
+        motor.preguntar(filtro);
+        responderMaquina();
+    }
 
-		if (ganador1 != jugador1) {
-			registro.registrar("\nPerdiste contra la Máquina Aleatoria. El desafío termina acá.");
-			return;
-		}
+    public void arriesgar(Personaje personaje) {
+        motor.arriesgar(personaje);
+        responderMaquina();
+    }
 
-		scoreRepository.registrarVictoria(nombre);
-        registro.registrar("\n¡Ganaste la primera ronda! Ahora entra la Máquina Asertiva.");
+    public void continuarARonda2() {
+        if (!esperandoContinuar) {
+            throw new IllegalStateException("Todavía no se puede pasar a la segunda ronda.");
+        }
+        esperandoContinuar = false;
+        iniciarRonda2();
+    }
 
-		
-		Tablero tableroAsertiva = new Tablero(personajes);
-		JugadorHumano jugador2 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
-		jugador2.elegirPersonaje(secretoJugador);
+    // ---------- Rondas ----------
 
-		MaquinaAsertiva asertiva = new MaquinaAsertiva(tableroAsertiva, historial, registro);
-		asertiva.elegirPersonaje(azar(personajes));
+    private void iniciarRonda1() {
+        ronda = 1;
+        jugador = new JugadorHumano(nombre, new Tablero(personajes));
+        jugador.elegirPersonaje(secretoJugador);
 
-		int heredadas = replicarPreguntasPrevias(historial, aleatoria.getNombre(), asertiva.getNombre(), tableroAsertiva);
+        aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
+        aleatoria.elegirPersonaje(azar());
+
+        motor = new MotorJuego(jugador, aleatoria, historial, registro);
+        motor.iniciar();
+    }
+
+    private void iniciarRonda2() {
+        ronda = 2;
+        jugador = new JugadorHumano(nombre, new Tablero(personajes));
+        jugador.elegirPersonaje(secretoJugador);
+
+        Tablero tableroAsertiva = new Tablero(personajes);
+        MaquinaAsertiva asertiva = new MaquinaAsertiva(tableroAsertiva, historial, registro);
+        asertiva.elegirPersonaje(azar());
+
+        int heredadas = replicarPreguntasPrevias(asertiva.getNombre(), tableroAsertiva);
         registro.registrar("\nLa Máquina Asertiva entra conociendo " + heredadas + " pregunta(s) previa(s); "
-				+ "arranca con " + tableroAsertiva.cantidadRestante() + " personaje(s) posible(s).");
+                + "arranca con " + tableroAsertiva.cantidadRestante() + " personaje(s) posible(s).");
 
-		Jugador ganador2 = new MotorJuego(jugador2, asertiva, historial, pausaTrasMaquina, registro).jugar();
+        motor = new MotorJuego(jugador, asertiva, historial, registro);
+        motor.iniciar();
+    }
 
-		if (ganador2 == jugador2) {
-			scoreRepository.registrarVictoria(nombre);
+    // Después de la jugada del humano, la máquina juega sola su turno.
+    private void responderMaquina() {
+        if (!motor.isPartidaTerminada()) {
+            motor.jugarTurnoMaquina();
+        }
+        if (motor.isPartidaTerminada()) {
+            procesarFinDeRonda();
+        }
+    }
+
+    private void procesarFinDeRonda() {
+        boolean ganoElJugador = motor.getGanador() == jugador;
+
+        if (ronda == 1) {
+            if (ganoElJugador) {
+                scoreRepository.registrarVictoria(nombre);
+                registro.registrar("\n¡Ganaste la primera ronda! Tocá \"Continuar\" para enfrentar a la Máquina Asertiva.");
+                esperandoContinuar = true;
+            } else {
+                registro.registrar("\nPerdiste contra la Máquina Aleatoria. El desafío termina acá.");
+                desafioTerminado = true;
+            }
+            return;
+        }
+
+        if (ganoElJugador) {
+            scoreRepository.registrarVictoria(nombre);
             registro.registrar("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
-		} else if (ganador2 == null) {
+        } else if (motor.getGanador() == null) {
             registro.registrar("\nLa segunda ronda terminó en empate.");
-		} else {
+        } else {
             registro.registrar("\nLa Máquina Asertiva te ganó la segunda ronda.");
-		}
-	}
+        }
+        desafioTerminado = true;
+    }
 
-	
-	private int replicarPreguntasPrevias(HistorialConsultas historial, String nombreAleatoria,
-			String nombreAsertiva, Tablero tableroAsertiva) {
-		List<Consulta> previas = historial.obtenerConsultasDe(nombreAleatoria);
-		for (Consulta c : previas) {
-			FiltroAplicado f = c.getFiltro();
-			tableroAsertiva.aplicarFiltro(f.getTipo(), f.getValor(), c.getRespuesta());
-			historial.agregarConsulta(nombreAsertiva, f, c.getRespuesta());
-		}
-		return previas.size();
-	}
+    // La Máquina Asertiva arranca aplicando a su tablero las preguntas que hizo la Aleatoria.
+    private int replicarPreguntasPrevias(String nombreAsertiva, Tablero tableroAsertiva) {
+        List<Consulta> previas = historial.obtenerConsultasDe(aleatoria.getNombre());
+        for (Consulta c : previas) {
+            FiltroAplicado f = c.getFiltro();
+            tableroAsertiva.aplicarFiltro(f.getTipo(), f.getValor(), c.getRespuesta());
+            historial.agregarConsulta(nombreAsertiva, f, c.getRespuesta());
+        }
+        return previas.size();
+    }
 
-	private Personaje elegirPersonajeSecreto(List<Personaje> personajes) {
-		System.out.println("\nElegí tu personaje secreto (el que las máquinas tienen que adivinar):");
-		for (int i = 0; i < personajes.size(); i++) {
-			System.out.println((i + 1) + ". " + personajes.get(i));
-		}
+    private Personaje azar() {
+        return personajes.get(random.nextInt(personajes.size()));
+    }
 
-		while (true) {
-			System.out.print("\n>> ");
-			try {
-				int opcion = Integer.parseInt(scanner.nextLine().trim());
-				if (opcion >= 1 && opcion <= personajes.size()) {
-					Personaje elegido = personajes.get(opcion - 1);
-					System.out.println("Tu personaje secreto es: " + elegido.getNombre());
-					return elegido;
-				}
-			} catch (NumberFormatException e) {
-				// se vuelve a pedir
-			}
-			System.out.println("Opción inválida, probá de nuevo.");
-		}
-	}
+    // ---------- Consultas para la pantalla ----------
 
-	private Personaje azar(List<Personaje> personajes) {
-		return personajes.get(random.nextInt(personajes.size()));
-	}
+    public Registro getRegistro() {
+        return registro;
+    }
+
+    public Tablero getTableroJugador() {
+        return jugador.getTablero();
+    }
+
+    public int getRonda() {
+        return ronda;
+    }
+
+    public boolean esTurnoDelJugador() {
+        return motor.esTurnoDelHumano();
+    }
+
+    public boolean isEsperandoContinuar() {
+        return esperandoContinuar;
+    }
+
+    public boolean isDesafioTerminado() {
+        return desafioTerminado;
+    }
 }

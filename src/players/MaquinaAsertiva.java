@@ -10,7 +10,7 @@ import model.TipoFiltro;
 import utils.FiltroFactory;
 import utils.Registro;
 
-public class MaquinaAsertiva extends Jugador {
+public class MaquinaAsertiva extends JugadorMaquina {
 	private final Random random = new Random();
     private final HistorialConsultas historial;
     private final Registro registro;

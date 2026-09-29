@@ -21,10 +21,6 @@ public abstract class Jugador {
         this.personajeSecreto = personaje;
     }
 
-    public abstract FiltroAplicado hacerPregunta();
-
-    public abstract Personaje arriesgarPersonaje();
-
     public void filtrarOpciones(FiltroAplicado filtro, boolean respuestaEsperada) {
     	tablero.aplicarFiltro(filtro.getTipo(), filtro.getValor(), respuestaEsperada);
     }

@@ -11,7 +11,7 @@ import model.TipoFiltro;
 import utils.FiltroFactory;
 import utils.Registro;
 
-public class MaquinaAleatoria extends Jugador {
+public class MaquinaAleatoria extends JugadorMaquina {
 	private static final double PROB_ARRIESGAR = 0.3;
 
 	private final Random random = new Random();
