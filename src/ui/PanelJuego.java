@@ -8,7 +8,6 @@ import utils.PersonajeFactory;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.util.List;
 
 public class PanelJuego {
     private static final Dimension TAM_TABLERO = new Dimension(600, 400);
@@ -24,6 +23,7 @@ public class PanelJuego {
 
     private final PanelTablero tablero = new PanelTablero();
     private final PanelFiltros filtros = new PanelFiltros();
+    private final PanelLogs logs = new PanelLogs();
     private final VentanaPrincipal ventana;
     private final ModoJugadorVsMaquinas modo;
 
@@ -40,6 +40,15 @@ public class PanelJuego {
 
         contenedorFiltros.setLayout(new BorderLayout());
         contenedorFiltros.add(filtros.getRaiz(), BorderLayout.CENTER);
+
+        GridBagConstraints gbcLogs = new GridBagConstraints();
+        gbcLogs.gridx = 0;
+        gbcLogs.gridy = 0;
+        gbcLogs.weightx = 1.0;
+        gbcLogs.weighty = 1.0;
+        gbcLogs.fill = GridBagConstraints.BOTH;
+        gbcLogs.insets = new Insets(5, 5, 5, 5);
+        contenedorRegistros.add(logs.getRaiz(), gbcLogs);
 
         btnTerminarPartida.addActionListener(e -> terminarPartida());
         btnArriesgarPersonaje.addActionListener(e -> activarModoArriesgo());
@@ -70,8 +79,7 @@ public class PanelJuego {
         if (modo.isDesafioTerminado()) {
             filtros.setHabilitado(false);
             btnArriesgarPersonaje.setEnabled(false);
-            // El desafío terminó (ganaste las dos rondas, perdiste o empataste): volvemos a elegir modo.
-            ventana.mostrarPantalla("MODOS");
+            mostrarResultadoFinal();
         } else if (modo.isEsperandoContinuar()) {
             filtros.setHabilitado(false);
             btnArriesgarPersonaje.setEnabled(false);
@@ -84,6 +92,21 @@ public class PanelJuego {
             filtros.setHabilitado(true);
             btnArriesgarPersonaje.setEnabled(true);
         }
+    }
+
+    // El desafío terminó (ganó, perdió o empató la segunda ronda): se lo informa y vuelve al menú principal.
+    private void mostrarResultadoFinal() {
+        JOptionPane.showOptionDialog(
+                raiz,
+                modo.getResultadoFinal(),
+                "Partida terminada",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                new Object[]{"Volver al menú principal"},
+                "Volver al menú principal"
+        );
+        ventana.mostrarPantalla("MENU");
     }
 
     // El jugador decide terminar la partida en cualquier momento y volver a elegir modo.
@@ -124,13 +147,10 @@ public class PanelJuego {
         }
     }
 
-    // Vuelca al usuario, en un diálogo, los mensajes que dejó pendientes el Registro
+    // Vuelca al panel de logs los mensajes que dejó pendientes el Registro
     // (respuesta del rival, jugada de la máquina, fin de ronda, etc.).
     private void mostrarMensajes() {
-        List<String> mensajes = modo.getRegistro().retirarMensajes();
-        if (!mensajes.isEmpty()) {
-            JOptionPane.showMessageDialog(raiz, String.join("\n", mensajes), "Jugada", JOptionPane.INFORMATION_MESSAGE);
-        }
+        logs.agregarMensajes(modo.getRegistro().retirarMensajes());
     }
 
     private static void fijarTamanio(JComponent c, Dimension d) {
@@ -197,13 +217,6 @@ public class PanelJuego {
         gbc.insets = new Insets(5, 5, 5, 5);
         raiz.add(contenedorRegistros, gbc);
         contenedorRegistros.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        final JPanel spacer1 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        contenedorRegistros.add(spacer1, gbc);
         btnTerminarPartida = new JButton();
         btnTerminarPartida.setText("Terminar partida");
         gbc = new GridBagConstraints();

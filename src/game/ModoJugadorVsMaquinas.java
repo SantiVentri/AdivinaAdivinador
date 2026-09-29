@@ -35,6 +35,7 @@ public class ModoJugadorVsMaquinas {
     private int ronda;
     private boolean esperandoContinuar;
     private boolean desafioTerminado;
+    private String resultadoFinal;
 
     public ModoJugadorVsMaquinas(String nombre, Personaje secretoJugador, List<Personaje> personajes) {
         this.nombre = nombre;
@@ -117,6 +118,7 @@ public class ModoJugadorVsMaquinas {
                 esperandoContinuar = true;
             } else {
                 registro.registrar("\nPerdiste contra la Máquina Aleatoria. El desafío termina acá.");
+                resultadoFinal = "Perdiste contra la Máquina Aleatoria. El desafío termina acá.";
                 desafioTerminado = true;
             }
             return;
@@ -125,10 +127,13 @@ public class ModoJugadorVsMaquinas {
         if (ganoElJugador) {
             scoreRepository.registrarVictoria(nombre);
             registro.registrar("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
+            resultadoFinal = "¡Le ganaste también a la Máquina Asertiva! Desafío completado.";
         } else if (motor.getGanador() == null) {
             registro.registrar("\nLa segunda ronda terminó en empate.");
+            resultadoFinal = "La segunda ronda terminó en empate.";
         } else {
             registro.registrar("\nLa Máquina Asertiva te ganó la segunda ronda.");
+            resultadoFinal = "La Máquina Asertiva te ganó la segunda ronda.";
         }
         desafioTerminado = true;
     }
@@ -172,5 +177,9 @@ public class ModoJugadorVsMaquinas {
 
     public boolean isDesafioTerminado() {
         return desafioTerminado;
+    }
+
+    public String getResultadoFinal() {
+        return resultadoFinal;
     }
 }

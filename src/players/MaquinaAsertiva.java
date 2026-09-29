@@ -25,15 +25,15 @@ public class MaquinaAsertiva extends JugadorMaquina {
 	@Override
 	public FiltroAplicado hacerPregunta() {
 		int restantes = getTablero().cantidadRestante();
-		System.out.println("[Máquina Asertiva] Analizando filtros sobre " + restantes + " personaje(s) restante(s)...");
+		registro.registrar("[Máquina Asertiva] Analizando filtros sobre " + restantes + " personaje(s) restante(s)...");
 
 		FiltroAplicado mejorFiltro = buscarMejorFiltro(true);
 
 		if (mejorFiltro != null) {
-			System.out.println("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo().toString().replace("_", " ") + "=" + mejorFiltro.getValor().toLowerCase()
+			registro.registrar("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo().toString().replace("_", " ") + "=" + mejorFiltro.getValor().toLowerCase()
 					+ " por ser la división más equilibrada.");
 		} else {
-			System.out.println("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
+			registro.registrar("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
 		}
 
 		return mejorFiltro;
@@ -57,7 +57,7 @@ public class MaquinaAsertiva extends JugadorMaquina {
 				double diferencia = Math.abs(cantidad - mitad);
 
 				if (verboso) {
-					System.out.println("  - Evalúo " + tipo.toString().replace("_", " ") + " = " + valor + " -> " + cantidad
+					registro.registrar("  - Evalúo " + tipo.toString().replace("_", " ") + " = " + valor + " -> " + cantidad
 							+ " cumplen (diferencia con la mitad: " + diferencia + ")");
 				}
 
@@ -76,7 +76,7 @@ public class MaquinaAsertiva extends JugadorMaquina {
 		List<Personaje> restantes = getTablero().getPersonajesRestantes();
 
 		if (restantes.isEmpty()) {
-			System.out.println("[Máquina Asertiva] No quedan personajes para arriesgar.");
+			registro.registrar("[Máquina Asertiva] No quedan personajes para arriesgar.");
 			return null;
 		}
 
@@ -88,7 +88,7 @@ public class MaquinaAsertiva extends JugadorMaquina {
 		}
 
 		Personaje elegido = restantes.get(random.nextInt(restantes.size()));
-		System.out.println("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
+		registro.registrar("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
 
 		return elegido;
 	}
