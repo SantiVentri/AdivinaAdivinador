@@ -12,6 +12,7 @@ import players.MaquinaAleatoria;
 import players.MaquinaAsertiva;
 import utils.Consola;
 import utils.PersonajeFactory;
+import utils.Registro;
 
 
 public class ModoMaquinaVsMaquina {
@@ -23,25 +24,25 @@ public class ModoMaquinaVsMaquina {
 	}
 
 	public void jugar() {
-		System.out.println("\n########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
-
-		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
+        Registro registro = new Registro();
 
-		MaquinaAsertiva asertiva = new MaquinaAsertiva(new Tablero(personajes), historial);
-		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial);
+		MaquinaAsertiva asertiva = new MaquinaAsertiva(new Tablero(personajes), historial, registro);
+		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
 
 		asertiva.elegirPersonaje(azar(personajes));
 		aleatoria.elegirPersonaje(azar(personajes));
 
+        registro.registrar("\n########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
+
 		Jugador ganador = new MotorJuego(asertiva, aleatoria, historial,
-				jugadorQueJugo -> Consola.esperarEnter(scanner)).jugar();
+				jugadorQueJugo -> Consola.esperarEnter(scanner), registro).jugar();
 
 		if (ganador == null) {
-			System.out.println("\nLa partida terminó en empate.");
+            registro.registrar("\nLa partida terminó en empate.");
 		} else {
-			System.out.println("\nGanó: " + ganador.getNombre());
+            registro.registrar("\nGanó: " + ganador.getNombre());
 		}
 	}
 

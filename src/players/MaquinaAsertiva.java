@@ -11,15 +11,18 @@ import model.Personaje;
 import model.SangreLimpia;
 import model.Tablero;
 import model.TipoFiltro;
+import utils.Registro;
 
 public class MaquinaAsertiva extends Jugador {
 	private final Random random = new Random();
-	private final HistorialConsultas historial;
+    private final HistorialConsultas historial;
+    private final Registro registro;
 
-	public MaquinaAsertiva(Tablero tablero, HistorialConsultas historial) {
-		super("Máquina Asertiva", tablero);
-		this.historial = historial;
-	}
+    public MaquinaAsertiva(Tablero tablero, HistorialConsultas historial, Registro registro) {
+        super("Máquina Asertiva", tablero);
+        this.historial = historial;
+        this.registro = registro;
+    }
 
 	@Override
 	public FiltroAplicado hacerPregunta() {

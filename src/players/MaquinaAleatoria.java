@@ -12,17 +12,20 @@ import model.Personaje;
 import model.SangreLimpia;
 import model.Tablero;
 import model.TipoFiltro;
+import utils.Registro;
 
 public class MaquinaAleatoria extends Jugador {
 	private static final double PROB_ARRIESGAR = 0.3;
 
 	private final Random random = new Random();
-	private final HistorialConsultas historial;
+    private final HistorialConsultas historial;
+    private final Registro registro;
 
-	public MaquinaAleatoria(Tablero tablero, HistorialConsultas historial) {
-		super("Máquina Aleatoria", tablero);
-		this.historial = historial;
-	}
+    public MaquinaAleatoria(Tablero tablero, HistorialConsultas historial, Registro registro) {
+        super("Máquina Aleatoria", tablero);
+        this.historial = historial;
+        this.registro = registro;
+    }
 
 	@Override
 	public FiltroAplicado hacerPregunta() {
@@ -37,7 +40,7 @@ public class MaquinaAleatoria extends Jugador {
 			intentos++;
 		} while (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor)) && intentos < 50);
 
-		System.out.println("[Máquina Aleatoria] No analizo nada, pregunto al azar: " + tipo + "=" + valor);
+		registro.registrar("[Máquina Aleatoria] No analizo nada, pregunto al azar: " + tipo + "=" + valor);
 
 		return new FiltroAplicado(tipo, valor);
 	}
@@ -47,7 +50,7 @@ public class MaquinaAleatoria extends Jugador {
 		List<Personaje> restantes = getTablero().getPersonajesRestantes();
 
 		if (restantes.isEmpty()) {
-			System.out.println("[Máquina Aleatoria] No quedan personajes para arriesgar.");
+            registro.registrar("[Máquina Aleatoria] No quedan personajes para arriesgar.");
 			return null;
 		}
 
@@ -60,7 +63,7 @@ public class MaquinaAleatoria extends Jugador {
 		int indiceRandom = random.nextInt(restantes.size());
 		Personaje elegido = restantes.get(indiceRandom);
 
-		System.out.println("[Máquina Aleatoria] Arriesgo al azar entre " + restantes.size() + " restantes: " + elegido.getNombre());
+        registro.registrar("[Máquina Aleatoria] Arriesgo al azar entre " + restantes.size() + " restantes: " + elegido.getNombre());
 
 		return elegido;
 	}

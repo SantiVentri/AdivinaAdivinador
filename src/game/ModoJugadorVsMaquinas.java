@@ -18,6 +18,7 @@ import score.RepositorioPuntajes;
 import score.ScoreRepository;
 import utils.Consola;
 import utils.PersonajeFactory;
+import utils.Registro;
 
 
 public class ModoJugadorVsMaquinas {
@@ -31,13 +32,13 @@ public class ModoJugadorVsMaquinas {
 	}
 
 	public void jugar() {
-		System.out.println("\n########## JUGADOR vs MÁQUINAS ##########");
-		
 		List<Personaje> personajes = PersonajeFactory.crearPersonajes();
 		HistorialConsultas historial = new HistorialConsultas();
+        Registro registro = new Registro();
 		RepositorioPuntajes scoreRepository = new ScoreRepository();
 
-		
+		registro.registrar("\n########## JUGADOR vs MÁQUINAS ##########");
+
 		Consumer<Jugador> pausaTrasMaquina = jugadorQueJugo -> {
 			if (!(jugadorQueJugo instanceof JugadorHumano)) {
 				Consola.esperarEnter(scanner);
@@ -49,40 +50,40 @@ public class ModoJugadorVsMaquinas {
 		JugadorHumano jugador1 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
 		jugador1.elegirPersonaje(secretoJugador);
 
-		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial);
+		MaquinaAleatoria aleatoria = new MaquinaAleatoria(new Tablero(personajes), historial, registro);
 		aleatoria.elegirPersonaje(azar(personajes));
 
-		Jugador ganador1 = new MotorJuego(jugador1, aleatoria, historial, pausaTrasMaquina).jugar();
+		Jugador ganador1 = new MotorJuego(jugador1, aleatoria, historial, pausaTrasMaquina, registro).jugar();
 
 		if (ganador1 != jugador1) {
-			System.out.println("\nPerdiste contra la Máquina Aleatoria. El desafío termina acá.");
+			registro.registrar("\nPerdiste contra la Máquina Aleatoria. El desafío termina acá.");
 			return;
 		}
 
 		scoreRepository.registrarVictoria(nombre);
-		System.out.println("\n¡Ganaste la primera ronda! Ahora entra la Máquina Asertiva.");
+        registro.registrar("\n¡Ganaste la primera ronda! Ahora entra la Máquina Asertiva.");
 
 		
 		Tablero tableroAsertiva = new Tablero(personajes);
 		JugadorHumano jugador2 = new JugadorHumano(nombre, new Tablero(personajes), scanner);
 		jugador2.elegirPersonaje(secretoJugador);
 
-		MaquinaAsertiva asertiva = new MaquinaAsertiva(tableroAsertiva, historial);
+		MaquinaAsertiva asertiva = new MaquinaAsertiva(tableroAsertiva, historial, registro);
 		asertiva.elegirPersonaje(azar(personajes));
 
 		int heredadas = replicarPreguntasPrevias(historial, aleatoria.getNombre(), asertiva.getNombre(), tableroAsertiva);
-		System.out.println("\nLa Máquina Asertiva entra conociendo " + heredadas + " pregunta(s) previa(s); "
+        registro.registrar("\nLa Máquina Asertiva entra conociendo " + heredadas + " pregunta(s) previa(s); "
 				+ "arranca con " + tableroAsertiva.cantidadRestante() + " personaje(s) posible(s).");
 
-		Jugador ganador2 = new MotorJuego(jugador2, asertiva, historial, pausaTrasMaquina).jugar();
+		Jugador ganador2 = new MotorJuego(jugador2, asertiva, historial, pausaTrasMaquina, registro).jugar();
 
 		if (ganador2 == jugador2) {
 			scoreRepository.registrarVictoria(nombre);
-			System.out.println("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
+            registro.registrar("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
 		} else if (ganador2 == null) {
-			System.out.println("\nLa segunda ronda terminó en empate.");
+            registro.registrar("\nLa segunda ronda terminó en empate.");
 		} else {
-			System.out.println("\nLa Máquina Asertiva te ganó la segunda ronda.");
+            registro.registrar("\nLa Máquina Asertiva te ganó la segunda ronda.");
 		}
 	}
 
