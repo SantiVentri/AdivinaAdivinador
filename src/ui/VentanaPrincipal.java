@@ -22,6 +22,7 @@ public class VentanaPrincipal extends JFrame {
 
     public VentanaPrincipal() {
         super("AdivinaAdivinador");
+        UIManager.put("Panel.background", Color.WHITE);
 
         // Pantallas fijas
         contenedor.add(new PanelBienvenida(this).getRaiz(), "BIENVENIDA");
