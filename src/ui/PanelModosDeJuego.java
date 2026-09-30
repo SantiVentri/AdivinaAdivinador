@@ -13,7 +13,7 @@ public class PanelModosDeJuego {
 
     public PanelModosDeJuego(VentanaPrincipal ventana) {
         btnModo1.addActionListener(e -> ventana.mostrarEleccionPersonaje());
-        btnModo2.addActionListener(e -> ventana.iniciarPartida(2));
+        btnModo2.addActionListener(e -> ventana.iniciarMaquinaVsMaquina());
         btnSalir.addActionListener(e -> ventana.mostrarPantalla("MENU"));
     }
 

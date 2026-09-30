@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 // Grilla de 4 filas x 6 columnas con una tarjeta por personaje.
@@ -46,6 +47,19 @@ public class PanelTablero extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    // Muestra todos los personajes en posiciones fijas: los que ya no son opción quedan apagados
+    // y los descartados en el último turno se resaltan. Lo usa la pantalla de espectador.
+    public void mostrarConDescartados(List<Personaje> todos, List<Personaje> restantes,
+                                      Collection<Personaje> recienDescartados) {
+        mostrar(todos, null);
+        for (TarjetaPersonaje tarjeta : tarjetas) {
+            Personaje personaje = tarjeta.getPersonaje();
+            if (!restantes.contains(personaje)) {
+                tarjeta.setDescartada(recienDescartados.contains(personaje));
+            }
+        }
     }
 
     public List<TarjetaPersonaje> getTarjetas() {

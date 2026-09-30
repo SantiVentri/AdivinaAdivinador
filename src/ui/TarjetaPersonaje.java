@@ -12,6 +12,12 @@ public class TarjetaPersonaje extends JButton {
     private static final Color FONDO_SELECCIONADA = new Color(214, 221, 248);
     private static final Color BORDE = new Color(160, 160, 160);
     private static final Color BORDE_SELECCIONADA = new Color(52, 84, 209);
+    private static final Color FONDO_DESCARTADA = new Color(242, 242, 242);
+    private static final Color TEXTO_DESCARTADA = new Color(175, 175, 175);
+    private static final Color BORDE_DESCARTADA = new Color(225, 225, 225);
+    private static final Color FONDO_RECIEN_DESCARTADA = new Color(248, 215, 215);
+    private static final Color TEXTO_RECIEN_DESCARTADA = new Color(150, 50, 50);
+    private static final Color BORDE_RECIEN_DESCARTADA = new Color(200, 70, 70);
 
     private final Personaje personaje;
 
@@ -32,6 +38,24 @@ public class TarjetaPersonaje extends JButton {
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(seleccionada ? BORDE_SELECCIONADA : BORDE, seleccionada ? 3 : 1),
                 BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+    }
+
+    // Personaje que ya no es una opción posible. Si se descartó en el último turno se resalta en rojo
+    // para que se vea qué cambió; si no, queda apagado en gris.
+    public void setDescartada(boolean recienDescartada) {
+        if (recienDescartada) {
+            setBackground(FONDO_RECIEN_DESCARTADA);
+            setForeground(TEXTO_RECIEN_DESCARTADA);
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(BORDE_RECIEN_DESCARTADA, 2),
+                    BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        } else {
+            setBackground(FONDO_DESCARTADA);
+            setForeground(TEXTO_DESCARTADA);
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(BORDE_DESCARTADA, 1),
+                    BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+        }
     }
 
     public Personaje getPersonaje() {

@@ -3,7 +3,6 @@ package ui;
 import game.ModoJugadorVsMaquinas;
 import model.FiltroAplicado;
 import model.Personaje;
-import utils.PersonajeFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -53,16 +52,9 @@ public class PanelJuego {
         btnTerminarPartida.addActionListener(e -> terminarPartida());
         btnArriesgarPersonaje.addActionListener(e -> activarModoArriesgo());
 
-        if (modo != null) {
-            filtros.setAlPreguntar(this::preguntar);
-            tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
-            mostrarMensajes();
-        } else {
-            // Modo Máquina vs. Máquina todavía no está conectado a esta pantalla.
-            filtros.setHabilitado(false);
-            btnArriesgarPersonaje.setEnabled(false);
-            tablero.mostrar(PersonajeFactory.crearPersonajes(), null);
-        }
+        filtros.setAlPreguntar(this::preguntar);
+        tablero.mostrar(modo.getTableroJugador().getPersonajesRestantes(), null);
+        mostrarMensajes();
     }
 
     // ---------- Interacción con el modo de juego ----------

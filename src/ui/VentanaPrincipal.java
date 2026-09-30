@@ -1,6 +1,7 @@
 package ui;
 
 import game.ModoJugadorVsMaquinas;
+import game.ModoMaquinaVsMaquina;
 import model.Personaje;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ public class VentanaPrincipal extends JFrame {
     private final JPanel contenedor = new JPanel(cards);
     private final PanelPuntajes panelPuntajes;
     private PanelJuego panelJuego;
+    private PanelEspectador panelEspectador;
     private PanelEleccionPersonaje panelEleccion;
 
     private String nombreJugador;
@@ -41,18 +43,24 @@ public class VentanaPrincipal extends JFrame {
     public void mostrarPantalla(String nombre) {
         cards.show(contenedor, nombre);
 
-        // La pantalla de juego define su propio tamaño (suma de sus paneles);
+        // Las pantallas de juego definen su propio tamaño (suma de sus paneles);
         // el resto usa el tamaño fijo de la ventana.
         Dimension anterior = getSize();
         if ("JUEGO".equals(nombre)) {
-            contenedor.setPreferredSize(panelJuego.getRaiz().getPreferredSize());
-            pack();
+            ajustarA(panelJuego.getRaiz());
+        } else if ("ESPECTADOR".equals(nombre)) {
+            ajustarA(panelEspectador.getRaiz());
         } else {
             setSize(TAM_VENTANA);
         }
         if (!getSize().equals(anterior)) {
             setLocationRelativeTo(null);
         }
+    }
+
+    private void ajustarA(JPanel pantalla) {
+        contenedor.setPreferredSize(pantalla.getPreferredSize());
+        pack();
     }
 
     public void mostrarEleccionPersonaje() {
@@ -69,8 +77,13 @@ public class VentanaPrincipal extends JFrame {
         iniciarPartida(modo);
     }
 
-    public void iniciarPartida(int modo) {
-        iniciarPantallaDeJuego(null);
+    public void iniciarMaquinaVsMaquina() {
+        if (panelEspectador != null) {
+            contenedor.remove(panelEspectador.getRaiz());
+        }
+        panelEspectador = new PanelEspectador(this, new ModoMaquinaVsMaquina());
+        contenedor.add(panelEspectador.getRaiz(), "ESPECTADOR");
+        mostrarPantalla("ESPECTADOR");
     }
 
     public void iniciarPartida(ModoJugadorVsMaquinas modo) {
