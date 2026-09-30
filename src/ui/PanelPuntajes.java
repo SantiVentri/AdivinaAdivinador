@@ -1,5 +1,6 @@
 package ui;
 
+import score.Puntaje;
 import score.RepositorioPuntajes;
 import score.ScoreRepository;
 
@@ -7,12 +8,11 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
 
-// Pantalla del marcador de records: puesto, jugador y partidas ganadas,
-// ordenado de mayor a menor. Si no hay puntajes muestra un mensaje.
+// Pantalla del marcador de records: puesto, jugador, partidas jugadas, rondas y partidas ganadas,
+// ordenado por partidas y, a igualdad, por rondas. Si no hay puntajes muestra un mensaje.
 public class PanelPuntajes {
-    private static final String[] COLUMNAS = {"Puesto", "Jugador", "Partidas ganadas"};
+    private static final String[] COLUMNAS = {"Puesto", "Jugador", "Partidas jugadas", "Rondas ganadas", "Partidas ganadas"};
 
     private JPanel raiz;
     private JLabel lblTitulo;
@@ -41,12 +41,13 @@ public class PanelPuntajes {
     public void cargar() {
         // Instancia nueva para releer el archivo: la partida registra las victorias con su propio repositorio.
         RepositorioPuntajes repositorio = new ScoreRepository();
-        List<Map.Entry<String, Integer>> puntajes = repositorio.obtenerPuntajesOrdenados();
+        List<Puntaje> puntajes = repositorio.obtenerPuntajesOrdenados();
 
         modeloTabla.setRowCount(0);
         int puesto = 1;
-        for (Map.Entry<String, Integer> entrada : puntajes) {
-            modeloTabla.addRow(new Object[]{puesto, entrada.getKey(), entrada.getValue()});
+        for (Puntaje puntaje : puntajes) {
+            modeloTabla.addRow(new Object[]{puesto, puntaje.getNombreJugador(), puntaje.getPartidasJugadas(),
+                    puntaje.getRondasGanadas(), puntaje.getPartidasGanadas()});
             puesto++;
         }
 

@@ -42,6 +42,9 @@ public class ModoJugadorVsMaquinas {
         this.secretoJugador = secretoJugador;
         this.personajes = personajes;
 
+        // Cada desafío que arranca cuenta como partida jugada, aunque después se abandone.
+        scoreRepository.registrarPartidaJugada(nombre);
+
         registro.registrar("########## JUGADOR vs MÁQUINAS ##########\n");
         registro.registrar("Tu personaje secreto es: " + secretoJugador.getNombre());
         iniciarRonda1();
@@ -113,7 +116,7 @@ public class ModoJugadorVsMaquinas {
 
         if (ronda == 1) {
             if (ganoElJugador) {
-                scoreRepository.registrarVictoria(nombre);
+                scoreRepository.registrarRondaGanada(nombre);
                 registro.registrar("\n¡Ganaste la primera ronda! Tocá \"Continuar\" para enfrentar a la Máquina Asertiva.");
                 esperandoContinuar = true;
             } else {
@@ -125,7 +128,8 @@ public class ModoJugadorVsMaquinas {
         }
 
         if (ganoElJugador) {
-            scoreRepository.registrarVictoria(nombre);
+            scoreRepository.registrarRondaGanada(nombre);
+            scoreRepository.registrarPartidaGanada(nombre);
             registro.registrar("\n¡Le ganaste también a la Máquina Asertiva! Desafío completado.");
             resultadoFinal = "¡Le ganaste también a la Máquina Asertiva! Desafío completado.";
         } else if (motor.getGanador() == null) {
