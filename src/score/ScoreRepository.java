@@ -1,5 +1,7 @@
 package score;
 
+import utils.MergeSort;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -54,9 +56,12 @@ public class ScoreRepository implements RepositorioPuntajes {
 	@Override
 	public List<Puntaje> obtenerPuntajesOrdenados() {
 		List<Puntaje> ordenado = new ArrayList<>(puntajes.values());
-		ordenado.sort(Comparator.comparingInt(Puntaje::getPartidasGanadas)
-				.thenComparingInt(Puntaje::getRondasGanadas)
-				.reversed());
+		MergeSort.ordenar(
+				ordenado,
+				Comparator.comparingInt(Puntaje::getPartidasGanadas)
+						.thenComparingInt(Puntaje::getRondasGanadas)
+						.reversed()
+		);
 		return ordenado;
 	}
 

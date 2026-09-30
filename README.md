@@ -51,7 +51,7 @@ src/
 │   └── ModoMaquinaVsMaquina.java     # Partida Asertiva vs. Aleatoria, avanzada de a un turno (espectador)
 ├── model/
 │   ├── Personaje.java                # Personaje y su lógica de cumpleFiltro(...)
-│   ├── Tablero.java                  # Personajes restantes: filtrado, descarte y búsqueda
+│   ├── Tablero.java                  # Personajes restantes: filtrado, descarte y búsqueda binaria por id
 │   ├── Filtro.java                   # Característica preguntable: tipo, nombre y valores
 │   ├── FiltroAplicado.java           # Par (tipo, valor) de una pregunta
 │   ├── TipoFiltro.java               # Enum de características filtrables
@@ -83,7 +83,8 @@ src/
 │   ├── PanelTablero.java             # Grilla 4x6 de tarjetas de personajes
 │   └── TarjetaPersonaje.java         # Botón de un personaje, con estilo seleccionada/descartada
 └── utils/
-    ├── PersonajeFactory.java         # Crea los 23 personajes, los ordena por género y les asigna id
+    ├── PersonajeFactory.java         # Crea los 23 personajes, los ordena por género (MergeSort) y les asigna id autoincremental
+    ├── MergeSort.java                # Ordenamiento genérico Merge Sort (divide y conquista, estable, O(n log n))
     ├── FiltroFactory.java            # Crea los 8 filtros con sus valores posibles
     └── Registro.java                 # Acumula los mensajes de la partida hasta que la pantalla los muestra
 ```
@@ -103,6 +104,9 @@ nombre;jugadas;rondas;partidas
 Juan;7;5;2
 ```
 
-En el modo Jugador vs. Máquinas, al empezar cada desafío se llama a `ScoreRepository.registrarPartidaJugada(nombre)`, cada ronda ganada llama a `ScoreRepository.registrarRondaGanada(nombre)` y, al ganar la segunda ronda, también a `registrarPartidaGanada(nombre)`.
-
-Cada llamada reescribe el archivo completo. Las líneas que no tengan el formato `nombre;jugadas;rondas;partidas` (por ejemplo, las de formatos viejos como `nombre;victorias`) se ignoran, así que conviene borrar un `scores.txt` viejo. La pantalla de Puntajes ordena por partidas ganadas y, a igualdad, por rondas ganadas.
+En el modo Jugador vs. Máquinas, al empezar cada desafío se llama a `ScoreRepository.registrarPartidaJugada(nombre)`, 
+cada ronda ganada llama a `ScoreRepository.registrarRondaGanada(nombre)` y, al ganar la segunda ronda, también a 
+`registrarPartidaGanada(nombre)`.
+La pantalla de Puntajes ordena por partidas ganadas y, a igualdad, por rondas ganadas, usando `MergeSort`. Al ser un
+ordenamiento estable, si dos jugadores empatan en ambos criterios se mantiene el orden en que se registraron. El archivo 
+se guarda en orden de registro: el ranking se calcula al consultarlo.

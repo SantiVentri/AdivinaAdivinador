@@ -88,7 +88,7 @@ public class PersonajeFactory {
 	}
 
 	private static List<Personaje> ordenar(List<Personaje> personajes) {
-		personajes.sort(Comparator.comparing(Personaje::getGenero));
+		MergeSort.ordenar(personajes, Comparator.comparing(Personaje::getGenero));
 
 		int orden = 1;
 		for (Personaje personaje : personajes) {
