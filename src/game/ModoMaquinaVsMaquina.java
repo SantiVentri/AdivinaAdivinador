@@ -41,7 +41,7 @@ public class ModoMaquinaVsMaquina {
         asertiva.elegirPersonaje(secretoAsertiva);
         aleatoria.elegirPersonaje(secretoAleatoria);
 
-        registro.registrar("########## MÁQUINA vs MÁQUINA (sos espectador) ##########");
+        registro.registrar("########## MÁQUINA vs MÁQUINA (sos espectador) ##########\n");
 
         motor = new MotorJuego(asertiva, aleatoria, historial, registro);
         motor.iniciar();

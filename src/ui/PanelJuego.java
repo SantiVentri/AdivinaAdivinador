@@ -11,7 +11,7 @@ import java.awt.*;
 public class PanelJuego {
     private static final Dimension TAM_TABLERO = new Dimension(600, 400);
     private static final Dimension TAM_FILTROS = new Dimension(400, 150);
-    private static final Dimension TAM_REGISTROS = new Dimension(250, 520);
+    private static final Dimension TAM_REGISTROS = new Dimension(350, 520);
 
     private JPanel raiz;
     private JPanel contenedorTablero;

@@ -42,7 +42,7 @@ public class ModoJugadorVsMaquinas {
         this.secretoJugador = secretoJugador;
         this.personajes = personajes;
 
-        registro.registrar("########## JUGADOR vs MÁQUINAS ##########");
+        registro.registrar("########## JUGADOR vs MÁQUINAS ##########\n");
         registro.registrar("Tu personaje secreto es: " + secretoJugador.getNombre());
         iniciarRonda1();
     }

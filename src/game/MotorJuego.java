@@ -47,9 +47,9 @@ public class MotorJuego {
     }
 
     public void iniciar() {
-        registro.registrar("\n==================================================" + "\n"
+        registro.registrar("\n==========================================" + "\n"
                 + "Comienza la partida: " + jugador1.getNombre() + " vs. " + jugador2.getNombre() + "\n"
-                + "==================================================");
+                + "==========================================");
         anunciarTurno();
     }
 
@@ -157,9 +157,9 @@ public class MotorJuego {
     private void declararGanador(Jugador jugador) {
         this.ganador = jugador;
         this.partidaTerminada = true;
-        registro.registrar("\n**************************************************" + "\n"
+        registro.registrar("\n******************************************" + "\n"
                 + jugador.getNombre() + " gana la partida." + "\n"
-                + "**************************************************");
+                + "******************************************");
     }
 
     // ---------- Consultas para la pantalla ----------
