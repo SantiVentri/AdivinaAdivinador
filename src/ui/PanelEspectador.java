@@ -16,9 +16,9 @@ import java.util.Map;
 // Muestra el tablero de la máquina que acaba de jugar, cuántos personajes le quedan a cada una
 // y los logs de la partida.
 public class PanelEspectador {
-    private static final Dimension TAM_TABLERO = new Dimension(600, 400);
+    private static final Dimension TAM_TABLERO = new Dimension(740, 500);
     private static final Dimension TAM_CONTROLES = new Dimension(400, 150);
-    private static final Dimension TAM_REGISTROS = new Dimension(350, 520);
+    private static final Dimension TAM_REGISTROS = new Dimension(350, 620);
 
     private JPanel raiz;
     private JPanel contenedorTablero;

@@ -4,6 +4,8 @@ import model.Personaje;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
+import java.text.Normalizer;
 
 // Tarjeta que representa a un personaje en una grilla (tablero de juego o elección del secreto).
 // Es un botón para que la pantalla que la use pueda reaccionar al clic si lo necesita.
@@ -18,14 +20,25 @@ public class TarjetaPersonaje extends JButton {
     private static final Color FONDO_RECIEN_DESCARTADA = new Color(248, 215, 215);
     private static final Color TEXTO_RECIEN_DESCARTADA = new Color(150, 50, 50);
     private static final Color BORDE_RECIEN_DESCARTADA = new Color(200, 70, 70);
+    private static final String CARPETA_IMAGENES = "/imagenes/personajes/";
+    private static final int TAM_IMAGEN = 80;
 
     private final Personaje personaje;
+    private final ImageIcon imagen;
+    private final ImageIcon imagenDescartada;
 
     public TarjetaPersonaje(Personaje personaje) {
         super("<html><center>" + personaje.getNombre() + "</center></html>");
         this.personaje = personaje;
+        this.imagen = cargarImagen(personaje);
+        this.imagenDescartada = imagen == null ? null
+                : new ImageIcon(GrayFilter.createDisabledImage(imagen.getImage()));
 
-        setFont(new Font("SansSerif", Font.BOLD, 11));
+        // Imagen arriba y nombre debajo.
+        setHorizontalTextPosition(SwingConstants.CENTER);
+        setVerticalTextPosition(SwingConstants.BOTTOM);
+        setIconTextGap(2);
+        setFont(new Font("SansSerif", Font.BOLD, 10));
         setForeground(Color.BLACK);
         setFocusPainted(false);
         setContentAreaFilled(false);
@@ -34,6 +47,7 @@ public class TarjetaPersonaje extends JButton {
     }
 
     public void setSeleccionada(boolean seleccionada) {
+        setIcon(imagen);
         setBackground(seleccionada ? FONDO_SELECCIONADA : FONDO);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(seleccionada ? BORDE_SELECCIONADA : BORDE, seleccionada ? 3 : 1),
@@ -43,6 +57,7 @@ public class TarjetaPersonaje extends JButton {
     // Personaje que ya no es una opción posible. Si se descartó en el último turno se resalta en rojo
     // para que se vea qué cambió; si no, queda apagado en gris.
     public void setDescartada(boolean recienDescartada) {
+        setIcon(imagenDescartada);
         if (recienDescartada) {
             setBackground(FONDO_RECIEN_DESCARTADA);
             setForeground(TEXTO_RECIEN_DESCARTADA);
@@ -60,5 +75,21 @@ public class TarjetaPersonaje extends JButton {
 
     public Personaje getPersonaje() {
         return personaje;
+    }
+
+    // Busca la imagen del personaje a partir de su nombre ("Harry Potter" -> harry_potter.jpg).
+    // Si no existe, devuelve null y la tarjeta muestra solo el nombre.
+    private static ImageIcon cargarImagen(Personaje personaje) {
+        String archivo = Normalizer.normalize(personaje.getNombre(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase()
+                .replaceAll("[^a-z0-9]+", "_") + ".jpg";
+        URL url = TarjetaPersonaje.class.getResource(CARPETA_IMAGENES + archivo);
+        if (url == null) {
+            return null;
+        }
+        Image escalada = new ImageIcon(url).getImage()
+                .getScaledInstance(TAM_IMAGEN, TAM_IMAGEN, Image.SCALE_SMOOTH);
+        return new ImageIcon(escalada);
     }
 }
