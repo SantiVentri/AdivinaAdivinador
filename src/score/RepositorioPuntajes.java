@@ -1,18 +1,20 @@
 package score;
 
 import java.util.List;
-import java.util.Map;
 
 public interface RepositorioPuntajes {
 
-    /** Suma una victoria al jugador y persiste el cambio. */
-    void registrarVictoria(String nombreJugador);
+    /** Suma una partida jugada al jugador y persiste el cambio. */
+    void registrarPartidaJugada(String nombreJugador);
 
-    /** Cantidad de victorias registradas para el jugador (0 si no tiene). */
-    int getVictorias(String nombreJugador);
+    /** Suma una ronda ganada al jugador y persiste el cambio. */
+    void registrarRondaGanada(String nombreJugador);
 
-    /** Marcador ordenado de mayor a menor cantidad de victorias. */
-    List<Map.Entry<String, Integer>> obtenerPuntajesOrdenados();
+    /** Suma una partida ganada (ambas rondas del desafío) al jugador y persiste el cambio. */
+    void registrarPartidaGanada(String nombreJugador);
+
+    /** Marcador ordenado por partidas ganadas y, a igualdad, por rondas ganadas (de mayor a menor). */
+    List<Puntaje> obtenerPuntajesOrdenados();
 
     /** Imprime el marcador por consola. */
     void mostrar();

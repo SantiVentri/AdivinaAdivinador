@@ -2,37 +2,38 @@ package players;
 
 import java.util.List;
 import java.util.Random;
-import model.CasaHogwarts;
-import model.ColorPelo;
-import model.Edad;
+import model.Filtro;
 import model.FiltroAplicado;
-import model.Genero;
 import model.Personaje;
-import model.SangreLimpia;
 import model.Tablero;
 import model.TipoFiltro;
+import utils.FiltroFactory;
+import utils.Registro;
 
-public class MaquinaAsertiva extends Jugador {
+public class MaquinaAsertiva extends JugadorMaquina {
 	private final Random random = new Random();
-	private final HistorialConsultas historial;
+    private final HistorialConsultas historial;
+    private final Registro registro;
+    private final List<Filtro> filtros = FiltroFactory.crearFiltros();
 
-	public MaquinaAsertiva(Tablero tablero, HistorialConsultas historial) {
-		super("Máquina Asertiva", tablero);
-		this.historial = historial;
-	}
+    public MaquinaAsertiva(Tablero tablero, HistorialConsultas historial, Registro registro) {
+        super("Máquina Asertiva", tablero);
+        this.historial = historial;
+        this.registro = registro;
+    }
 
 	@Override
 	public FiltroAplicado hacerPregunta() {
 		int restantes = getTablero().cantidadRestante();
-		System.out.println("[Máquina Asertiva] Analizando filtros sobre " + restantes + " personaje(s) restante(s)...");
+		registro.registrar("[Máquina Asertiva] Analizando filtros sobre " + restantes + " personaje(s) restante(s)...");
 
 		FiltroAplicado mejorFiltro = buscarMejorFiltro(true);
 
 		if (mejorFiltro != null) {
-			System.out.println("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo().toString().replace("_", " ") + "=" + mejorFiltro.getValor().toLowerCase()
+			registro.registrar("[Máquina Asertiva] Elijo " + mejorFiltro.getTipo().toString().replace("_", " ") + "=" + mejorFiltro.getValor().toLowerCase()
 					+ " por ser la división más equilibrada.");
 		} else {
-			System.out.println("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
+			registro.registrar("[Máquina Asertiva] No me quedan filtros nuevos para probar.");
 		}
 
 		return mejorFiltro;
@@ -45,8 +46,9 @@ public class MaquinaAsertiva extends Jugador {
 		FiltroAplicado mejorFiltro = null;
 		double mejorDiferencia = Double.MAX_VALUE;
 
-		for (TipoFiltro tipo : TipoFiltro.values()) {
-			for (String valor : valoresPosibles(tipo)) {
+        for (Filtro filtro : filtros) {
+            TipoFiltro tipo = filtro.getTipo();
+            for (String valor : filtro.getValores()) {
 				if (historial.yaFuePreguntado(getNombre(), FiltroAplicado.clave(tipo, valor))) {
 					continue;
 				}
@@ -55,7 +57,7 @@ public class MaquinaAsertiva extends Jugador {
 				double diferencia = Math.abs(cantidad - mitad);
 
 				if (verboso) {
-					System.out.println("  - Evalúo " + tipo.toString().replace("_", " ") + " = " + valor + " -> " + cantidad
+					registro.registrar("  - Evalúo " + tipo.toString().replace("_", " ") + " = " + valor + " -> " + cantidad
 							+ " cumplen (diferencia con la mitad: " + diferencia + ")");
 				}
 
@@ -74,7 +76,7 @@ public class MaquinaAsertiva extends Jugador {
 		List<Personaje> restantes = getTablero().getPersonajesRestantes();
 
 		if (restantes.isEmpty()) {
-			System.out.println("[Máquina Asertiva] No quedan personajes para arriesgar.");
+			registro.registrar("[Máquina Asertiva] No quedan personajes para arriesgar.");
 			return null;
 		}
 
@@ -86,38 +88,9 @@ public class MaquinaAsertiva extends Jugador {
 		}
 
 		Personaje elegido = restantes.get(random.nextInt(restantes.size()));
-		System.out.println("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
+		registro.registrar("[Máquina Asertiva] Arriesgo entre " + restantes.size() + " restante(s): " + elegido.getNombre());
 
 		return elegido;
-	}
-
-	private String[] valoresPosibles(TipoFiltro tipo) {
-		switch (tipo) {
-			case GENERO:
-				return nombresDe(Genero.values());
-			case EDAD:
-				return nombresDe(Edad.values());
-			case COLOR_PELO:
-				return nombresDe(ColorPelo.values());
-			case CASA_HOGWARTS:
-				return nombresDe(CasaHogwarts.values());
-			case SANGRE_LIMPIA:
-				return nombresDe(SangreLimpia.values());
-			case CALVICIE:
-			case LENTES:
-			case ALUMNO:
-				return new String[] { "true", "false" };
-			default:
-				throw new IllegalStateException("Tipo de filtro no soportado: " + tipo);
-		}
-	}
-
-	private <T extends Enum<T>> String[] nombresDe(T[] valores) {
-		String[] nombres = new String[valores.length];
-		for (int i = 0; i < valores.length; i++) {
-			nombres[i] = valores[i].name();
-		}
-		return nombres;
 	}
 
 }
