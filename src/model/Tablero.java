@@ -57,30 +57,6 @@ public class Tablero {
         return null;
     }
 
-    public Personaje buscarPorId(int id) {
-        return buscarPorId(personajesRestantes, 0, personajesRestantes.size() - 1, id);
-    }
-
-    // Búsqueda binaria (divide y conquista). Requiere que personajesRestantes
-    // se mantenga ordenada por id, invariante que respetan aplicarFiltro,
-    // sacarPersonaje y reiniciar.
-    private Personaje buscarPorId(List<Personaje> lista, int desde, int hasta, int id) {
-        if (desde > hasta) {
-            return null;
-        }
-
-        int medio = desde + (hasta - desde) / 2;
-        Personaje candidato = lista.get(medio);
-
-        if (candidato.getId() == id) {
-            return candidato;
-        } else if (candidato.getId() > id) {
-            return buscarPorId(lista, desde, medio - 1, id);
-        } else {
-            return buscarPorId(lista, medio + 1, hasta, id);
-        }
-    }
-
     public boolean quedaUnoSolo() {
         return personajesRestantes.size() == 1;
     }
