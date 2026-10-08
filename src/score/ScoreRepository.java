@@ -65,24 +65,6 @@ public class ScoreRepository implements RepositorioPuntajes {
 		return ordenado;
 	}
 
-	@Override
-	public void mostrar() {
-		if (puntajes.isEmpty()) {
-			System.out.println("\n(Todavía no hay puntajes registrados.)");
-			return;
-		}
-
-		System.out.println("\n---------- Marcador de records ----------");
-		int puesto = 1;
-		for (Puntaje puntaje : obtenerPuntajesOrdenados()) {
-			System.out.println(puesto + ". " + puntaje.getNombreJugador() + " - "
-					+ puntaje.getPartidasJugadas() + " jugada(s), "
-					+ puntaje.getRondasGanadas() + " ronda(s), "
-					+ puntaje.getPartidasGanadas() + " partida(s)");
-			puesto++;
-		}
-	}
-
 	private Puntaje puntajeDe(String nombreJugador) {
 		return puntajes.computeIfAbsent(nombreJugador, nombre -> new Puntaje(nombre, 0, 0, 0));
 	}

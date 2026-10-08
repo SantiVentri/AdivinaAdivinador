@@ -3,7 +3,6 @@ package score;
 import java.util.List;
 
 public interface RepositorioPuntajes {
-
     /** Suma una partida jugada al jugador y persiste el cambio. */
     void registrarPartidaJugada(String nombreJugador);
 
@@ -15,7 +14,4 @@ public interface RepositorioPuntajes {
 
     /** Marcador ordenado por partidas ganadas y, a igualdad, por rondas ganadas (de mayor a menor). */
     List<Puntaje> obtenerPuntajesOrdenados();
-
-    /** Imprime el marcador por consola. */
-    void mostrar();
 }
