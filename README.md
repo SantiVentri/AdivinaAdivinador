@@ -52,7 +52,7 @@ src/
 │   └── ModoMaquinaVsMaquina.java     # Partida Asertiva vs. Aleatoria, avanzada de a un turno (espectador)
 ├── model/
 │   ├── Personaje.java                # Personaje y su lógica de cumpleFiltro(...)
-│   ├── Tablero.java                  # Personajes restantes: filtrado, descarte y búsqueda binaria por id
+│   ├── Tablero.java                  # Personajes restantes: filtrado y descarte
 │   ├── Filtro.java                   # Característica preguntable: tipo, nombre y valores
 │   ├── FiltroAplicado.java           # Par (tipo, valor) de una pregunta
 │   ├── TipoFiltro.java               # Enum de características filtrables
